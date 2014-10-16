@@ -20,21 +20,25 @@ public class Recommendation {
 	static Random random = new Random();
 	
 	public static String matrixToString(double[][] A) {
+		/* TODO: Dominique */
 		/* Méthode à coder */		
 		return "";
 	}
 	
 	public static boolean isMatrix( double[][] A ) {
+		/* TODO: Thierry */
 		/* Méthode à coder */		
 		return true;
 	}
 	
 	public static double[][] multiplyMatrix(double[][] A, double[][] B) {
+		/* TODO: Thierry */
 		/* Méthode à coder */
 		return null;	
 	}
 	
 	public static double[][] createMatrix( int n, int m, int k, int l) {
+		/* TODO: Dominique */
 		/* Méthode à coder */
 		/* Utilisez la variable 'random', par exemple */
 		int tmp = random.nextInt(5);
@@ -42,31 +46,37 @@ public class Recommendation {
 	}
 	
 	public static double rmse(double[][] M, double[][] P) {
+		/* TODO: Dominique */
 		/* Méthode à coder */	
 		return 0;
 	}
 	
 	public static double updateUElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
+		/* TODO: Thierry */
 		/* Méthode à coder */	
 		return 0;
 	}
 	
 	public static double updateVElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
+		/* TODO: Thierry */
 		/* Méthode à coder */	
 		return 0;		
 	}
 	
 	public static double[][] optimizeU( double[][] M, double[][] U, double[][] V) {
+		/* TODO: Thierry */
 		/* Méthode à coder */	
 		return null;		
 	}
 
 	public static double[][] optimizeV( double[][] M, double[][] U, double[][] V) {
+		/* TODO: Thierry */
 		/* Méthode à coder */	
 		return null;		
 	}
 	
 	public static int[] recommend( double[][] M, int d) {
+		/* TODO: Dominique */
 		/* Méthode à coder */	
 		return null;
 	}
