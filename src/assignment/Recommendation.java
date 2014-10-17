@@ -151,8 +151,40 @@ public class Recommendation {
 	
 	public static double updateUElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
 		/* TODO: Thierry */
-		/* Méthode à coder */	
-		return 0;
+
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return -1;
+		}
+
+		int n = M.length;
+		int m = M[0].length;
+		int d = V.length;
+
+		/* r et s ont des valeurs valides */
+		if (r < 0 || r >= n || s < 0 || s >= d) {
+			return -1;
+		}
+
+		double numerator = 0;
+		double denominator = 0;
+
+		for (int j = 0; j < m; j++) {
+			if (M[r][j] == 0) continue;
+
+			double suv = 0;
+			for (int k = 0; k < d; k++) {
+				if (k == s) continue;
+				suv += U[r][k] * V[k][j];
+			}
+
+			double vsj = V[s][j];
+			double mrj = M[r][j];
+
+			numerator   += vsj * (mrj - suv);
+			denominator += vsj * vsj;
+		}
+
+		return numerator / denominator;
 	}
 	
 	public static double updateVElem( double[][] M, double[][] U, double[][] V, int r, int s ) {

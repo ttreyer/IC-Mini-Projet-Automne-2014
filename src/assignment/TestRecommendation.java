@@ -8,6 +8,16 @@ public class TestRecommendation {
 	private final int DEFAULT_LENGTH = 5;
 	private final double DOUBLE_DIFF_DELTA = 0.01;
 
+	static double[][] U = { { 2, 2 }, { 2, 2 }, { 2, 2 }, { 2, 2 } };
+	static double[][] V = { { 1, 1, 1, 1 }, { 1, 1, 1, 1 } };
+
+	static double[][] M = {
+		{ 11,  0,  9,  8,  7 },
+		{ 18,  0, 18, 18, 18 },
+		{ 29, 28, 27,  0, 25 },
+		{ 6,   6,  0,  6,  6 },
+		{ 17, 16, 15, 14,  0 } };
+
 	@Test
 	public void testIsMatrix() {
 		/* Test pour null */
@@ -76,5 +86,37 @@ public class TestRecommendation {
 		for (int i = 0, l = testRectC.length; i < l; i++) {
 			assertArrayEquals(rectC[i], testRectC[i], DOUBLE_DIFF_DELTA);
 		}
+	}
+	
+	public void testUpdateUElem() {
+		double[][] M1 = {
+			{  0,  8,  9,  8,  7 },
+			{ 18,  0, 18, 18, 18 },
+			{ 29, 28, 27,  0, 25 },
+			{ 6,   6,  0,  6,  6 },
+			{ 17, 16, 15, 14,  0 } };
+
+		/* Test avec M invalide */
+		assertEquals(-1.0, Recommendation.updateUElem(null, U, V, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec U invalide */
+		assertEquals(-1.0, Recommendation.updateUElem(M, null, V, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec V invalide */
+		assertEquals(-1.0, Recommendation.updateUElem(M, U, null, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec r invalide */
+		assertEquals(-1.0, Recommendation.updateUElem(M, U, V, -10, 0), DOUBLE_DIFF_DELTA);
+		assertEquals(-1.0, Recommendation.updateUElem(M, U, V, 100, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec s invalide */
+		assertEquals(-1.0, Recommendation.updateUElem(M, U, V, 0, -10), DOUBLE_DIFF_DELTA);
+		assertEquals(-1.0, Recommendation.updateUElem(M, U, V, 0, 100), DOUBLE_DIFF_DELTA);
+
+		/* Test avec M */
+		assertEquals(6.75, Recommendation.updateUElem(M, U, V, 0, 0), 0.001);
+
+		/* Test avec M1 */
+		assertEquals(6.0, Recommendation.updateUElem(M1, U, V, 0, 0), 0.001);
 	}
 }
