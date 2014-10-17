@@ -65,8 +65,31 @@ public class Recommendation {
 	
 	public static double[][] multiplyMatrix(double[][] A, double[][] B) {
 		/* TODO: Thierry */
-		/* Méthode à coder */
-		return null;	
+
+		/* Matrices A et B valides */
+		if (isMatrix(A) == false || isMatrix(B) == false) {
+			return null;
+		}
+
+		/* Matrices de taille compatibles */
+		if (A[0].length != B.length) {
+			return null;
+		}
+
+		int n = A.length; /* Nombre de lignes de la matrice finale */
+		int m = B[0].length; /* Nombre de colonnes de la matrice finale */
+		int p = A[0].length; /* Longueur d'une multiplication */
+		double[][] C = new double[n][m];
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				for (int k = 0; k < p; k++) {
+					C[i][j] += A[i][k] * B[k][j];
+				}
+			}
+		}
+
+		return C;	
 	}
 	
 	public static double[][] createMatrix( int n, int m, int k, int l) {
