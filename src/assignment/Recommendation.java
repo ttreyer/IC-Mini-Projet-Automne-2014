@@ -19,10 +19,31 @@ public class Recommendation {
 	
 	static Random random = new Random();
 	
+	/** 
+	 * Converti une matrice en chaine de caractère
+	 * @param A Matrice à convertir
+	 * @return La matrice passée en argument sous forme de chaine de caractère
+	 */
 	public static String matrixToString(double[][] A) {
 		/* TODO: Dominique */
-		/* Méthode à coder */		
-		return "";
+		/* Méthode à coder */	
+
+		// Chaine contenant la matrice
+		String SMatrix = "{\n";
+		for(int i=0; i<A.length; ++i) {
+			SMatrix += "  {";
+			for(int j=0; j<A[i].length; ++j) {
+				SMatrix += Double.toString(A[i][j]);
+				if(j!=A[i].length-1) SMatrix += ",";
+			}
+			SMatrix += "}";
+			if(i!=A.length-1) SMatrix += ",";
+			SMatrix += "\n";
+		}
+		SMatrix += "};";
+		
+		
+		return SMatrix;
 	}
 	
 	public static boolean isMatrix( double[][] A ) {
@@ -92,12 +113,34 @@ public class Recommendation {
 		return C;	
 	}
 	
+	/**
+	 * Créer une matrice a partir d'une taille donnée et d'une plage de valeur
+	 * aléatoire
+	 * @param n Lignes 
+	 * @param m Colonnes
+	 * @param k Borne inférieure du randomize
+	 * @param l Borne supérieure du randomize
+	 * @return Matrice nxm contenant des nombres réels générés aléatoirements
+	 */
 	public static double[][] createMatrix( int n, int m, int k, int l) {
 		/* TODO: Dominique */
-		/* Méthode à coder */
-		/* Utilisez la variable 'random', par exemple */
-		int tmp = random.nextInt(5);
-		return null;
+		double randValue;
+		
+		if(m==0 && n==0 || k>l) return null;
+		
+		double[][] matrice = new double[n][m];
+		
+		for(int ligne=0; ligne<n; ++ligne) {
+			for(int c=0; c<m; ++c) {
+				// Génération d'une valeur réelle aléatoire comprise entre k et l
+				randValue = k+random.nextDouble()*l;
+				
+				//Remplissage de la matrice
+				matrice[ligne][c] = randValue;
+			}
+		}
+		
+		return matrice;
 	}
 	
 	public static double rmse(double[][] M, double[][] P) {
