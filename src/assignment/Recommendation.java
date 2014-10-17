@@ -64,25 +64,13 @@ public class Recommendation {
 	}
 	
 	public static boolean isMatrix( double[][] A ) {
-		/* TODO: Thierry */
-
-		/* A n'est pas null */
-		if (A == null) {
+		/* A n'est pas null ou vide */
+		if (A == null || A.length == 0) {
 			return false;
 		}
 
-		/* A n'est pas vide */
-		if (A.length == 0) {
-			return false;
-		}
-
-		/* La première ligne de A n'est pas null */
-		if (A[0] == null) {
-			return false;
-		}
-
-		/* La première ligne de A n'est pas vide */
-		if (A[0].length == 0) {
+		/* La première ligne de A n'est pas null ou vide */
+		if (A[0] == null || A[0].length == 0) {
 			return false;
 		}
 
@@ -102,14 +90,12 @@ public class Recommendation {
 	}
 	
 	public static double[][] multiplyMatrix(double[][] A, double[][] B) {
-		/* TODO: Thierry */
-
 		/* Matrices A et B valides */
 		if (isMatrix(A) == false || isMatrix(B) == false) {
 			return null;
 		}
 
-		/* Matrices de taille compatibles */
+		/* Matrices de tailles compatibles */
 		if (A[0].length != B.length) {
 			return null;
 		}
@@ -175,8 +161,7 @@ public class Recommendation {
 	}
 	
 	public static double updateUElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
-		/* TODO: Thierry */
-
+		/* Matrices valides */
 		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
 			return -1;
 		}
@@ -223,8 +208,7 @@ public class Recommendation {
 	}
 	
 	public static double updateVElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
-		/* TODO: Thierry */
-
+		/* Matrices valides */
 		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
 			return -1;
 		}
