@@ -1,14 +1,10 @@
 package assignment;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 public class Recommendation {
 
-	/*
-	 * Inscrivez votre nom complet (prénom et nom de famille)
-	 * ainsi que votre numéro sciper ci-dessous :
-	 */
-	
 	/* Etudiant 1 */
 	public static String NAME1 = "Dominique Roduit";
 	public static int SCIPER1 = 234868;
@@ -19,29 +15,50 @@ public class Recommendation {
 	
 	static Random random = new Random();
 	
+	public static void main(String[] args) {
+		double[][] testMatrix = Recommendation.createMatrix(20, 20, 5, 6);
+
+		
+		System.out.println(matrixToString(testMatrix));
+	}
+	
 	/** 
-	 * Converti une matrice en chaine de caractère
+	 * Convertion d'une matrice en chaine de caractère
 	 * @param A Matrice à convertir
+	 * @author Dominique
 	 * @return La matrice passée en argument sous forme de chaine de caractère
 	 */
 	public static String matrixToString(double[][] A) {
-		/* TODO: Dominique */
-		/* Méthode à coder */	
-
+		if(!isMatrix(A)) return null;
+		
+		// Formattage des valeurs de la matrice à 1 décimals au min et au max
+		DecimalFormat f = new DecimalFormat();
+		f.setMinimumFractionDigits(1);
+		f.setMaximumFractionDigits(1);
+		
 		// Chaine contenant la matrice
 		String SMatrix = "{\n";
+		
+		// On parcours les lignes de la matrice
 		for(int i=0; i<A.length; ++i) {
-			SMatrix += "  {";
+			 // Une tabulation et debut de la ligne
+			SMatrix += "\t{";
+			
+			// On parcours les colonnes de la matrice
 			for(int j=0; j<A[i].length; ++j) {
-				SMatrix += Double.toString(A[i][j]);
+				SMatrix += f.format(A[i][j]);
+				// Ajout d'une virgule après chaque valeur sauf la dernière
 				if(j!=A[i].length-1) SMatrix += ",";
 			}
+			
+			// fin de la ligne de matrice
 			SMatrix += "}";
-			if(i!=A.length-1) SMatrix += ",";
-			SMatrix += "\n";
+			// Ajout d'une virgule après chaque ligne de matrice excepté la dernière
+			if(i!=A.length-1) SMatrix += ","; 
+			// Retour à la ligne après chaque ligne de matrice
+			SMatrix += "\n"; 
 		}
 		SMatrix += "};";
-		
 		
 		return SMatrix;
 	}
@@ -120,27 +137,35 @@ public class Recommendation {
 	 * @param m Colonnes
 	 * @param k Borne inférieure du randomize
 	 * @param l Borne supérieure du randomize
+	 * @author Dominique
 	 * @return Matrice nxm contenant des nombres réels générés aléatoirements
 	 */
 	public static double[][] createMatrix( int n, int m, int k, int l) {
-		/* TODO: Dominique */
 		double randValue;
 		
-		if(m==0 && n==0 || k>l) return null;
+		// Si les dimensions de la matrices ou la plage ne valeurs ne sont pas correctes
+		if(m<=0 || n<=0 || l<=k) return null;
 		
+		// Matrice
 		double[][] matrice = new double[n][m];
 		
+		// On parcours chaque ligne de la matrice
 		for(int ligne=0; ligne<n; ++ligne) {
+			// On parcours chaque colonne
 			for(int c=0; c<m; ++c) {
 				// Génération d'une valeur réelle aléatoire comprise entre k et l
-				randValue = k+random.nextDouble()*l;
+				randValue = k+(l-k)*random.nextDouble();
 				
 				//Remplissage de la matrice
 				matrice[ligne][c] = randValue;
 			}
 		}
 		
-		return matrice;
+		// On ne retourne la matrice que si celle-ci est correcte
+		if(isMatrix(matrice)) 
+			return matrice;
+		else
+			return null;
 	}
 	
 	public static double rmse(double[][] M, double[][] P) {
