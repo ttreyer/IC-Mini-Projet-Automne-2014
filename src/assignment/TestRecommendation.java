@@ -122,6 +122,32 @@ public class TestRecommendation {
 	}
 	
 	@Test
+	public void testUpdateVElem() {
+		/* Test avec M invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(null, U, V, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec U invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, null, V, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec V invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, null, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec r invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, -10, 0), DOUBLE_DIFF_DELTA);
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, 100, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec s invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, 0, -10), DOUBLE_DIFF_DELTA);
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, 0, 100), DOUBLE_DIFF_DELTA);
+
+		/* Test avec M */
+		assertEquals(7.1, Recommendation.updateVElem(M, U, V, 0, 0), 0.001);
+
+		/* Test avec M1 */
+		assertEquals(7.75, Recommendation.updateVElem(M1, U, V, 0, 0), 0.001);
+	}
+	
+	@Test
 	public void testMatrixToString() {
 		double[][] testMatrix = {
 			{11.0,0.0,9.0,8.0,7.0},

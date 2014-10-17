@@ -224,8 +224,50 @@ public class Recommendation {
 	
 	public static double updateVElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
 		/* TODO: Thierry */
-		/* Méthode à coder */	
-		return 0;		
+
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return -1;
+		}
+
+		int n = M.length;
+		int m = M[0].length;
+		int d = V.length;
+
+		/* r et s ont des valeurs valides */
+		if (r < 0 || r >= n || s < 0 || s >= d) {
+			return -1;
+		}
+
+		/* U a une taille valide */
+		if (U.length != n || U[0].length != d) {
+			return -1;
+		}
+
+		/* V a une taille valide */
+		if (V.length != d || V[0].length != m) {
+			return -1;
+		}
+
+		double numerator = 0;
+		double denominator = 0;
+
+		for (int i = 0; i < n; i++) {
+			if (M[i][s] == 0) continue;
+
+			double suv = 0;
+			for (int k = 0; k < d; k++) {
+				if (k == r) continue;
+				suv += U[i][k] * V[k][s];
+			}
+
+			double uir = U[i][r];
+			double mis = M[i][s];
+
+			numerator   += uir * (mis - suv);
+			denominator += uir * uir;
+		}
+
+		return numerator / denominator;
 	}
 	
 	public static double[][] optimizeU( double[][] M, double[][] U, double[][] V) {
