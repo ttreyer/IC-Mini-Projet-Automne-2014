@@ -16,8 +16,8 @@ public class Recommendation {
 	static Random random = new Random();
 	
 	public static void main(String[] args) {
-		double[][] testMatrix = Recommendation.createMatrix(20, 20, 5, 6);
-
+		double[][] testMatrix = createMatrix(20, 20, 5, 6);
+		double[][] testMatrix2 = createMatrix(20, 20, 5, 6);
 		
 		System.out.println(matrixToString(testMatrix));
 	}
@@ -168,10 +168,47 @@ public class Recommendation {
 			return null;
 	}
 	
+	/**
+	 * Calcul du RMSE entre les matrices M et P pour tous les éléments non nuls de M
+	 * @param M Matrice M
+	 * @param P Matrice P
+	 * @return 
+	 */
 	public static double rmse(double[][] M, double[][] P) {
-		/* TODO: Dominique */
-		/* Méthode à coder */	
+		// Si les matrices ne sont pas de même dimensions ou si les tableaux ne sont pas des matrices
+		if(!isMatrix(M) || !isMatrix(P) || !compareMatrixDimensions(M, P)) {
+			return -1;
+		}
+		
+		
+		
+		
 		return 0;
+	}
+	
+	/**
+	 * Retourne la dimension de la matrice dans un tableau [ligne, colonne]
+	 * @param A Matrice (tableau à 2 dimensions)
+	 * @author Dominique
+	 * @return Dimensions de la matrice
+	 */
+	public static int[] getMatrixDimension(double[][] A) {
+		int lignes = A.length;
+		int colonnes = A[0].length;
+		return new int[]{lignes,colonnes};
+	}
+	
+	/**
+	 * Compare les dimensions de deux matrices
+	 * @param A Matrice 1
+	 * @param B Matrice 2
+	 * @author Dominique
+	 * @return true : A et B ont la même dimension, sinon, false
+	 */
+	public static boolean compareMatrixDimensions(double[][] A, double[][] B) {
+		int[] dimA = getMatrixDimension(A);
+		int[] dimB = getMatrixDimension(B);
+		return (dimA[0]==dimB[0] && dimA[1]==dimB[1]);
 	}
 	
 	public static double updateUElem( double[][] M, double[][] U, double[][] V, int r, int s ) {

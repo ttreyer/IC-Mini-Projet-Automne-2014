@@ -171,4 +171,13 @@ public class TestRecommendation {
 		// Test matrice avec dimension invalide
 		assertNull("Erreur : devrait retourner null", Recommendation.createMatrix(-20, 5, 5, 5));
 	}
+	
+	@Test
+	public void testRMSE() {
+		double[][] M = {{1,2}, {4,6}};
+		double[][] P = {{4,5}, {2,3}, {1,2}};
+		
+		// Test qu'un tableau non-matrice ne passe pas
+		assertEquals("Erreur : devrait retourner -1", (double)-1, Recommendation.rmse(M, P), DOUBLE_DIFF_DELTA);
+	}
 }
