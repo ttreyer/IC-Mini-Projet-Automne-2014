@@ -27,7 +27,39 @@ public class Recommendation {
 	
 	public static boolean isMatrix( double[][] A ) {
 		/* TODO: Thierry */
-		/* Méthode à coder */		
+
+		/* A n'est pas null */
+		if (A == null) {
+			return false;
+		}
+
+		/* A n'est pas vide */
+		if (A.length == 0) {
+			return false;
+		}
+
+		/* La première ligne de A n'est pas null */
+		if (A[0] == null) {
+			return false;
+		}
+
+		/* La première ligne de A n'est pas vide */
+		if (A[0].length == 0) {
+			return false;
+		}
+
+		/* Les lignes de A ne sont pas null et ont la même taille */
+		int length = A[0].length;
+		for (int i = 1, l = A.length; i < l; i++) {
+			if (A[i] == null) {
+				return false;
+			}
+
+			if (A[i].length != length) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 	
