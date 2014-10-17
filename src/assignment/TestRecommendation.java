@@ -8,11 +8,18 @@ public class TestRecommendation {
 	private final int DEFAULT_LENGTH = 5;
 	private final double DOUBLE_DIFF_DELTA = 0.01;
 
-	static double[][] U = { { 2, 2 }, { 2, 2 }, { 2, 2 }, { 2, 2 } };
-	static double[][] V = { { 1, 1, 1, 1 }, { 1, 1, 1, 1 } };
+	static double[][] U = { { 2, 2 }, { 2, 2 }, { 2, 2 }, { 2, 2 }, { 2, 2 } };
+	static double[][] V = { { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 } };
 
 	static double[][] M = {
 		{ 11,  0,  9,  8,  7 },
+		{ 18,  0, 18, 18, 18 },
+		{ 29, 28, 27,  0, 25 },
+		{ 6,   6,  0,  6,  6 },
+		{ 17, 16, 15, 14,  0 } };
+
+	double[][] M1 = {
+		{  0,  8,  9,  8,  7 },
 		{ 18,  0, 18, 18, 18 },
 		{ 29, 28, 27,  0, 25 },
 		{ 6,   6,  0,  6,  6 },
@@ -90,13 +97,6 @@ public class TestRecommendation {
 	
 	@Test
 	public void testUpdateUElem() {
-		double[][] M1 = {
-			{  0,  8,  9,  8,  7 },
-			{ 18,  0, 18, 18, 18 },
-			{ 29, 28, 27,  0, 25 },
-			{ 6,   6,  0,  6,  6 },
-			{ 17, 16, 15, 14,  0 } };
-
 		/* Test avec M invalide */
 		assertEquals(-1.0, Recommendation.updateUElem(null, U, V, 0, 0), DOUBLE_DIFF_DELTA);
 

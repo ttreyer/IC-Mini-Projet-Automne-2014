@@ -190,6 +190,16 @@ public class Recommendation {
 			return -1;
 		}
 
+		/* U a une taille valide */
+		if (U.length != n || U[0].length != d) {
+			return -1;
+		}
+
+		/* V a une taille valide */
+		if (V.length != d || V[0].length != m) {
+			return -1;
+		}
+
 		double numerator = 0;
 		double denominator = 0;
 
