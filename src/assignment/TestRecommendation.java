@@ -88,6 +88,7 @@ public class TestRecommendation {
 		}
 	}
 	
+	@Test
 	public void testUpdateUElem() {
 		double[][] M1 = {
 			{  0,  8,  9,  8,  7 },
@@ -118,5 +119,56 @@ public class TestRecommendation {
 
 		/* Test avec M1 */
 		assertEquals(6.0, Recommendation.updateUElem(M1, U, V, 0, 0), 0.001);
+	}
+	
+	@Test
+	public void testMatrixToString() {
+		double[][] testMatrix = {
+			{11.0,0.0,9.0,8.0,7.0},
+			{18.0,0.0,18.0,18.0,18.0},
+			{29.0,28.0,27.0,0.0,25.0},
+			{6.0,6.0,0.0,6.0,6.0},
+			{17.0,16.0,15.0,14.0,0.0}
+		};
+		
+		double[][] incorrectMatrix = {
+			{5, 0, 0, 0},
+			{1, 5, 6, 8, 9}
+		};
+		
+		String correctMatrixString = "{\n"
+				+ "\t{11.0,0.0,9.0,8.0,7.0},\n"
+				+ "\t{18.0,0.0,18.0,18.0,18.0},\n"
+				+ "\t{29.0,28.0,27.0,0.0,25.0},\n"
+				+ "\t{6.0,6.0,0.0,6.0,6.0},\n"
+				+ "\t{17.0,16.0,15.0,14.0,0.0}\n"
+				+ "};";
+		
+		// Test avec matrice correcte
+		assertEquals("Erreur : la matrice devrait être correcte", correctMatrixString, Recommendation.matrixToString(testMatrix));
+		
+		// Test avec matrice incorrecte
+		assertNull("Erreur : la matrice ne doit pas être valide !", Recommendation.matrixToString(incorrectMatrix));
+	}
+	
+	@Test
+	public void testCreateMatrix() {
+		// Test que toutes les valeurs de l'interval spécifié sont respectées
+		int minVal = -200;
+		int maxVal = 80;
+		boolean inRange = false;
+		double[][] matrix = Recommendation.createMatrix(12, 14, minVal, maxVal);
+		for(int i=0; i<matrix.length; ++i) {
+			for(int j=0; j<matrix[i].length; ++j) {
+				inRange = (matrix[i][j]>=minVal && matrix[i][j]<=maxVal);
+				assertTrue("Erreur : devrait retourner true !", inRange);
+			}
+		}
+		
+		// Test matrice avec un range invalide
+		assertNull("Erreur: devrait retourner null", Recommendation.createMatrix(10, 10, 10, 5));
+		
+		// Test matrice avec dimension invalide
+		assertNull("Erreur : devrait retourner null", Recommendation.createMatrix(-20, 5, 5, 5));
 	}
 }
