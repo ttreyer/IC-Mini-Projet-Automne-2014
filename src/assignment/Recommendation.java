@@ -19,7 +19,21 @@ public class Recommendation {
 		double[][] testMatrix = createMatrix(20, 20, 5, 6);
 		double[][] testMatrix2 = createMatrix(20, 20, 5, 6);
 		
-		System.out.println(matrixToString(testMatrix));
+		double[][] M = {{ 1, 0, 0},{ 0, 1, 1}};
+		double[][] P = {{ 1, 0, 2},{ 0, 1, 1}};
+		System.out.println(rmse(M,P));
+		
+	
+		
+		double[][] M2 = {{ 1, 0, 1},{ 0, 1, 1}};
+		double[][] P2 = {{ 1, 0, 2},{ 3, 1, 1}};
+		System.out.println(rmse(M2,P2));
+		
+
+		double[][] M3 = {{ 1, 0, 1},{ 0, 1, 1}};
+		double[][] P3 = {{ 1, 0},{3, 1}};
+		System.out.println(rmse(M3,P3));
+	
 	}
 	
 	/** 
@@ -180,10 +194,30 @@ public class Recommendation {
 			return -1;
 		}
 		
+		// A partir d'ici, on sait que les dimensions sont les mêmes
+		int[] dim = getMatrixDimension(M);
 		
+		double[] RMSE = new double[dim[0]];
+		int notNullEntries = 0;
 		
+		// Parcours des lignes
+		for(int i=0; i<dim[0]; ++i) {
+			for(int j=0; j<dim[1]; ++j) {
+				if(M[i][j]!=0) {
+					RMSE[i] += Math.pow(M[i][j]-P[i][j], 2);
+					++notNullEntries;
+				} 
+			}
+		}
 		
-		return 0;
+		double S = 0;
+		for(int i=0; i<RMSE.length; ++i) {
+			S += RMSE[i];
+		}
+		
+		double Smean = S/notNullEntries;
+		
+		return Math.sqrt(Smean);
 	}
 	
 	/**
