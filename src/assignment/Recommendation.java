@@ -78,25 +78,13 @@ public class Recommendation {
 	}
 	
 	public static boolean isMatrix( double[][] A ) {
-		/* TODO: Thierry */
-
-		/* A n'est pas null */
-		if (A == null) {
+		/* A n'est pas null ou vide */
+		if (A == null || A.length == 0) {
 			return false;
 		}
 
-		/* A n'est pas vide */
-		if (A.length == 0) {
-			return false;
-		}
-
-		/* La première ligne de A n'est pas null */
-		if (A[0] == null) {
-			return false;
-		}
-
-		/* La première ligne de A n'est pas vide */
-		if (A[0].length == 0) {
+		/* La première ligne de A n'est pas null ou vide */
+		if (A[0] == null || A[0].length == 0) {
 			return false;
 		}
 
@@ -116,14 +104,12 @@ public class Recommendation {
 	}
 	
 	public static double[][] multiplyMatrix(double[][] A, double[][] B) {
-		/* TODO: Thierry */
-
 		/* Matrices A et B valides */
 		if (isMatrix(A) == false || isMatrix(B) == false) {
 			return null;
 		}
 
-		/* Matrices de taille compatibles */
+		/* Matrices de tailles compatibles */
 		if (A[0].length != B.length) {
 			return null;
 		}
@@ -246,8 +232,7 @@ public class Recommendation {
 	}
 	
 	public static double updateUElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
-		/* TODO: Thierry */
-
+		/* Matrices valides */
 		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
 			return -1;
 		}
@@ -294,9 +279,50 @@ public class Recommendation {
 	}
 	
 	public static double updateVElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
-		/* TODO: Thierry */
-		/* Méthode à coder */	
-		return 0;		
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return -1;
+		}
+
+		int n = M.length;
+		int m = M[0].length;
+		int d = V.length;
+
+		/* r et s ont des valeurs valides */
+		if (r < 0 || r >= n || s < 0 || s >= d) {
+			return -1;
+		}
+
+		/* U a une taille valide */
+		if (U.length != n || U[0].length != d) {
+			return -1;
+		}
+
+		/* V a une taille valide */
+		if (V.length != d || V[0].length != m) {
+			return -1;
+		}
+
+		double numerator = 0;
+		double denominator = 0;
+
+		for (int i = 0; i < n; i++) {
+			if (M[i][s] == 0) continue;
+
+			double suv = 0;
+			for (int k = 0; k < d; k++) {
+				if (k == r) continue;
+				suv += U[i][k] * V[k][s];
+			}
+
+			double uir = U[i][r];
+			double mis = M[i][s];
+
+			numerator   += uir * (mis - suv);
+			denominator += uir * uir;
+		}
+
+		return numerator / denominator;
 	}
 	
 	public static double[][] optimizeU( double[][] M, double[][] U, double[][] V) {

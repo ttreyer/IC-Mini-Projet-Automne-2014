@@ -29,16 +29,16 @@ public class TestRecommendation {
 	public void testIsMatrix() {
 		/* Test pour null */
 		double[][] nullMatrix = null;
-		assertFalse("Erreur: devrait retourner false", Recommendation.isMatrix(nullMatrix));
+		assertFalse(Recommendation.isMatrix(nullMatrix));
 
 		/* Test pour matrice vide */
 		double[][] emptyMatrix = new double[0][0];
-		assertFalse("Erreur: devrait retourner false", Recommendation.isMatrix(emptyMatrix));
+		assertFalse(Recommendation.isMatrix(emptyMatrix));
 
 		/* Tests pour lignes ligne null */
 		double[][] nullRowMatrix = new double[DEFAULT_LENGTH][];
 		for (int i = 0; i < nullRowMatrix.length; i++) {
-			assertFalse("Erreur: devrait retourner false", Recommendation.isMatrix(nullRowMatrix));
+			assertFalse(Recommendation.isMatrix(nullRowMatrix));
 
 			nullRowMatrix[i] = new double[DEFAULT_LENGTH];
 		}
@@ -47,7 +47,7 @@ public class TestRecommendation {
 		double[][] emptyRowMatrix = new double[DEFAULT_LENGTH][];
 		for (int i = 0; i < emptyRowMatrix.length; i++) {
 			emptyRowMatrix[i] = new double[0];
-			assertFalse("Erreur: devrait retourner false", Recommendation.isMatrix(emptyRowMatrix));
+			assertFalse(Recommendation.isMatrix(emptyRowMatrix));
 
 			emptyRowMatrix[i] = new double[DEFAULT_LENGTH];
 		}
@@ -57,7 +57,7 @@ public class TestRecommendation {
 			{ 2, 4, 6, 8 },
 			{ 5, 6, 7, 8 },
 			{ 0, 2, 4, 6 } };
-		assertTrue("Erreur: devrait retourner true", Recommendation.isMatrix(validMatrix));
+		assertTrue(Recommendation.isMatrix(validMatrix));
 	}
 
 	@Test
@@ -74,13 +74,13 @@ public class TestRecommendation {
 		double[][] rectC = { { 28.33, 36.96 }, { 93.92, 125.62 } };
 
 		/* Test matrice A invalide */
-		assertNull("Erreur: devrait retourner null", Recommendation.multiplyMatrix(null, squareB));
+		assertNull(Recommendation.multiplyMatrix(null, squareB));
 
 		/* Test matrice B invalide */
-		assertNull("Erreur: devrait retourner null", Recommendation.multiplyMatrix(squareA, null));
+		assertNull(Recommendation.multiplyMatrix(squareA, null));
 
 		/* Test avec matrice ne pouvant pas être multipliées */
-		assertNull("Erreur: devrait retourner null", Recommendation.multiplyMatrix(mismatchA, mismatchB));
+		assertNull(Recommendation.multiplyMatrix(mismatchA, mismatchB));
 
 		/* Tests avec matrices carrées */
 		double[][] testSquareC = Recommendation.multiplyMatrix(squareA, squareB);
@@ -122,6 +122,32 @@ public class TestRecommendation {
 	}
 	
 	@Test
+	public void testUpdateVElem() {
+		/* Test avec M invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(null, U, V, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec U invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, null, V, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec V invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, null, 0, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec r invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, -10, 0), DOUBLE_DIFF_DELTA);
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, 100, 0), DOUBLE_DIFF_DELTA);
+
+		/* Test avec s invalide */
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, 0, -10), DOUBLE_DIFF_DELTA);
+		assertEquals(-1.0, Recommendation.updateVElem(M, U, V, 0, 100), DOUBLE_DIFF_DELTA);
+
+		/* Test avec M */
+		assertEquals(7.1, Recommendation.updateVElem(M, U, V, 0, 0), 0.001);
+
+		/* Test avec M1 */
+		assertEquals(7.75, Recommendation.updateVElem(M1, U, V, 0, 0), 0.001);
+	}
+	
+	@Test
 	public void testMatrixToString() {
 		double[][] testMatrix = {
 			{11.0,0.0,9.0,8.0,7.0},
@@ -145,10 +171,10 @@ public class TestRecommendation {
 				+ "};";
 		
 		// Test avec matrice correcte
-		assertEquals("Erreur : la matrice devrait être correcte", correctMatrixString, Recommendation.matrixToString(testMatrix));
+		assertEquals(correctMatrixString, Recommendation.matrixToString(testMatrix));
 		
 		// Test avec matrice incorrecte
-		assertNull("Erreur : la matrice ne doit pas être valide !", Recommendation.matrixToString(incorrectMatrix));
+		assertNull(Recommendation.matrixToString(incorrectMatrix));
 	}
 	
 	@Test
@@ -161,15 +187,15 @@ public class TestRecommendation {
 		for(int i=0; i<matrix.length; ++i) {
 			for(int j=0; j<matrix[i].length; ++j) {
 				inRange = (matrix[i][j]>=minVal && matrix[i][j]<=maxVal);
-				assertTrue("Erreur : devrait retourner true !", inRange);
+				assertTrue(inRange);
 			}
 		}
 		
 		// Test matrice avec un range invalide
-		assertNull("Erreur: devrait retourner null", Recommendation.createMatrix(10, 10, 10, 5));
+		assertNull(Recommendation.createMatrix(10, 10, 10, 5));
 		
 		// Test matrice avec dimension invalide
-		assertNull("Erreur : devrait retourner null", Recommendation.createMatrix(-20, 5, 5, 5));
+		assertNull(Recommendation.createMatrix(-20, 5, 5, 5));
 	}
 	
 	@Test
