@@ -163,11 +163,11 @@ public class TestRecommendation {
 		};
 		
 		String correctMatrixString = "{\n"
-				+ "\t{11.0,0.0,9.0,8.0,7.0},\n"
-				+ "\t{18.0,0.0,18.0,18.0,18.0},\n"
-				+ "\t{29.0,28.0,27.0,0.0,25.0},\n"
-				+ "\t{6.0,6.0,0.0,6.0,6.0},\n"
-				+ "\t{17.0,16.0,15.0,14.0,0.0}\n"
+				+ "\t{11.0, 0.0, 9.0, 8.0, 7.0},\n"
+				+ "\t{18.0, 0.0, 18.0, 18.0, 18.0},\n"
+				+ "\t{29.0, 28.0, 27.0, 0.0, 25.0},\n"
+				+ "\t{6.0, 6.0, 0.0, 6.0, 6.0},\n"
+				+ "\t{17.0, 16.0, 15.0, 14.0, 0.0}\n"
 				+ "};";
 		
 		// Test avec matrice correcte
@@ -175,6 +175,42 @@ public class TestRecommendation {
 		
 		// Test avec matrice incorrecte
 		assertNull(Recommendation.matrixToString(incorrectMatrix));
+		
+		// Test que la matrice créée puisse etre utilisable sans erreur en copié/collé dans un code java
+		double[][] matriceCree = Recommendation.createMatrix(20,30, -10000, 100000);
+		String matrixS = Recommendation.matrixToString(matriceCree);
+		matrixS = matrixS.replace(" ", "");
+		matrixS = matrixS.replace("\t", "");
+		matrixS = matrixS.replace("\n", "#");
+		matrixS = matrixS.substring(2, matrixS.length()-2);
+		
+		String[] lignes = matrixS.split("#");
+		double[][] matrixReverse = new double[20][30]; ;
+		for(int i=0; i<lignes.length; ++i) {
+			lignes[i] = (lignes[i].charAt(lignes[i].length()-1)==',') ? lignes[i].substring(1, lignes[i].length()-2) : lignes[i].substring(1, lignes[i].length()-1);
+			String[] col = lignes[i].split(",");
+
+			for(int j=0; j<col.length; ++j) {
+				matrixReverse[i][j] = Double.parseDouble(col[j]);
+			}
+		}
+		
+		for(int i=0; i<matriceCree.length; ++i) {
+			for(int j=0; j<matriceCree[i].length; ++j) {
+				assertEquals(matriceCree[i][j], matrixReverse[i][j], 0.15);
+			}
+		}
+		
+		 
+		
+		// Test que la chaine créée ne possède pas d'autres caractères que ceux attendus (on ne veux pas de séparateur pour les milliers par exemple...)
+		String charOk = "0123456789.-,{};";
+		boolean charIsOk = false;
+		matrixS = matrixS.replace("#", "");
+		for(int i=0; i<matrixS.length(); ++i) {
+			charIsOk = (charOk.indexOf(Character.toString(matrixS.charAt(i)))>-1);
+			assertTrue("Ce caractère ne devrait pas être dans la matrice générée : "+matrixS.charAt(i), charIsOk);
+		}
 	}
 	
 	@Test
@@ -204,6 +240,36 @@ public class TestRecommendation {
 		double[][] P = {{4,5}, {2,3}, {1,2}};
 		
 		// Test qu'un tableau non-matrice ne passe pas
-		assertEquals("Erreur : devrait retourner -1", (double)-1, Recommendation.rmse(M, P), DOUBLE_DIFF_DELTA);
+		assertEquals("Erreur : devrait retourner -1", -1, Recommendation.rmse(M, P), DOUBLE_DIFF_DELTA);
+		
+		// Test que le RMSE de la matrice donné dans l'exemple du cours donne bien le résultat 1.8
+		double[][] testRMSEM = {
+				{5,2,4,4,3},
+				{3,1,2,4,1},
+				{2,0,3,1,4},
+				{2,5,4,3,5},
+				{4,4,5,4,0}
+		};
+		double[][] testRMSEP = {
+				{2,2,2,2,2},
+				{2,2,2,2,2},
+				{2,2,2,2,2},
+				{2,2,2,2,2},
+				{2,2,2,2,2}
+		};
+		assertEquals(1.8, Recommendation.rmse(testRMSEM, testRMSEP), DOUBLE_DIFF_DELTA);
+		
+		// Test que les exemples de RMSE donnés dans le cours donnent bien les bons résultats
+		double[][] M1 = {{ 1, 0, 0},{ 0, 1, 1}};
+		double[][] P1 = {{ 1, 0, 2},{ 0, 1, 1}};
+		assertEquals(0.0, Recommendation.rmse(M1,P1), DOUBLE_DIFF_DELTA);
+		
+		double[][] M2 = {{ 1, 0, 1},{ 0, 1, 1}};
+		double[][] P2 = {{ 1, 0, 2},{ 3, 1, 1}};
+		assertEquals(0.5, Recommendation.rmse(M2,P2), DOUBLE_DIFF_DELTA);
+		
+		double[][] M3 = {{ 1, 0, 1},{ 0, 1, 1}};
+		double[][] P3 = {{ 1, 0},{3, 1}};
+		assertEquals(-1, Recommendation.rmse(M3,P3), DOUBLE_DIFF_DELTA);
 	}
 }

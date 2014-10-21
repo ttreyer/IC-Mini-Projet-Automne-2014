@@ -1,5 +1,9 @@
 package assignment;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.text.DecimalFormat;
 import java.util.Random;
 
@@ -18,21 +22,6 @@ public class Recommendation {
 	public static void main(String[] args) {
 		double[][] testMatrix = createMatrix(20, 20, 5, 6);
 		double[][] testMatrix2 = createMatrix(20, 20, 5, 6);
-		
-		double[][] M = {{ 1, 0, 0},{ 0, 1, 1}};
-		double[][] P = {{ 1, 0, 2},{ 0, 1, 1}};
-		System.out.println(rmse(M,P));
-		
-	
-		
-		double[][] M2 = {{ 1, 0, 1},{ 0, 1, 1}};
-		double[][] P2 = {{ 1, 0, 2},{ 3, 1, 1}};
-		System.out.println(rmse(M2,P2));
-		
-
-		double[][] M3 = {{ 1, 0, 1},{ 0, 1, 1}};
-		double[][] P3 = {{ 1, 0},{3, 1}};
-		System.out.println(rmse(M3,P3));
 	
 	}
 	
@@ -50,6 +39,9 @@ public class Recommendation {
 		f.setMinimumFractionDigits(1);
 		f.setMaximumFractionDigits(1);
 		
+		// On ne veux pas d'apostrophe de séparation pour les grands chiffres (ex: 1'000)
+		f.setGroupingUsed(false);
+		
 		// Chaine contenant la matrice
 		String SMatrix = "{\n";
 		
@@ -62,7 +54,7 @@ public class Recommendation {
 			for(int j=0; j<A[i].length; ++j) {
 				SMatrix += f.format(A[i][j]);
 				// Ajout d'une virgule après chaque valeur sauf la dernière
-				if(j!=A[i].length-1) SMatrix += ",";
+				if(j!=A[i].length-1) SMatrix += ", ";
 			}
 			
 			// fin de la ligne de matrice
@@ -172,7 +164,8 @@ public class Recommendation {
 	 * Calcul du RMSE entre les matrices M et P pour tous les éléments non nuls de M
 	 * @param M Matrice M
 	 * @param P Matrice P
-	 * @return 
+	 * @author Dominique
+	 * @return Calcul du RMSE
 	 */
 	public static double rmse(double[][] M, double[][] P) {
 		// Si les matrices ne sont pas de même dimensions ou si les tableaux ne sont pas des matrices
