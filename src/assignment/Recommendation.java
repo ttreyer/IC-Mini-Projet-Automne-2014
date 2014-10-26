@@ -282,7 +282,7 @@ public class Recommendation {
 		int d = V.length;
 
 		/* r et s ont des valeurs valides */
-		if (r < 0 || r >= n || s < 0 || s >= d) {
+		if (r < 0 || r >= d || s < 0 || s >= m) {
 			return -1;
 		}
 
