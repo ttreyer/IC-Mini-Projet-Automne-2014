@@ -5,7 +5,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Arrays;
 
 public class Recommendation {
 
@@ -18,12 +20,26 @@ public class Recommendation {
 	public static int SCIPER2 = 235116;
 	
 	static Random random = new Random();
+
+	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-6;
 	
 	public static void main(String[] args) {
-		double[][] testMatrix = createMatrix(20, 20, 5, 6);
-		double[][] testMatrix2 = createMatrix(20, 20, 5, 6);
-	
+		double[][] M = createMatrix(10, 10, -2, 1);
+		
+		System.out.println("===== Matrice générée =======");
+		System.out.println(matrixToString(M));
+		
+		
+		System.out.println("===== Recommand =======");
+		int[] recommended = recommend(M, 10);
+		
+		for(int i=0; i<recommended.length; ++i) {
+			System.out.println(recommended[i]);
+		}
+		
+		
 	}
+	
 	
 	/** 
 	 * Convertion d'une matrice en chaine de caractère
@@ -282,7 +298,7 @@ public class Recommendation {
 		int d = V.length;
 
 		/* r et s ont des valeurs valides */
-		if (r < 0 || r >= n || s < 0 || s >= d) {
+		if (r < 0 || r >= d || s < 0 || s >= m) {
 			return -1;
 		}
 
@@ -317,17 +333,107 @@ public class Recommendation {
 
 		return numerator / denominator;
 	}
-	
+
+	public static double[][] optimizeUIter( double[][] M, double[][] U, double[][] V) {
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		int n = M.length;
+		int m = M[0].length;
+		int d = V.length;
+
+		/* Copie de U */
+		double[][] Up = new double[n][];
+		for (int i = 0; i < n; i++) {
+			Up[i] = Arrays.copyOf(U[i], d);
+		}
+
+		/* Amélioration de U */
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < d; j++) {
+				Up[i][j] = updateUElem(M, Up, V, i, j);
+			}
+		}
+
+		return Up;
+	}
+
 	public static double[][] optimizeU( double[][] M, double[][] U, double[][] V) {
-		/* TODO: Thierry */
-		/* Méthode à coder */	
-		return U;		
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		double[][] lastU = U;
+		double[][] currentU = U;
+		double lastRmse = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double[][] P = null;
+
+		do {
+			lastRmse = currentRmse;
+			lastU = currentU;
+
+			currentU = optimizeUIter(M, lastU, V);
+
+			P = multiplyMatrix(currentU, V);
+			currentRmse = rmse(M, P);
+		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+
+		return currentU;
+	}
+
+	public static double[][] optimizeVIter( double[][] M, double[][] U, double[][] V) {
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		int n = M.length;
+		int m = M[0].length;
+		int d = V.length;
+
+		/* Copie de V */
+		double[][] Vp = new double[d][];
+		for (int i = 0; i < d; i++) {
+			Vp[i] = Arrays.copyOf(V[i], m);
+		}
+
+		/* Amélioration de V */
+		for (int i = 0; i < d; i++) {
+			for (int j = 0; j < m; j++) {
+				Vp[i][j] = updateVElem(M, U, Vp, i, j);
+			}
+		}
+
+		return Vp;
 	}
 
 	public static double[][] optimizeV( double[][] M, double[][] U, double[][] V) {
-		/* TODO: Thierry */
-		/* Méthode à coder */	
-		return V;		
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		double[][] lastV = V;
+		double[][] currentV = V;
+		double lastRmse = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double[][] P = null;
+
+		do {
+			lastRmse = currentRmse;
+			lastV = currentV;
+
+			currentV = optimizeVIter(M, U, lastV);
+
+			P = multiplyMatrix(U, currentV);
+			currentRmse = rmse(M, P);
+		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+
+		return currentV;
 	}
 	
 	/**
@@ -337,6 +443,14 @@ public class Recommendation {
 	 * @return Tableau d'entiers indiquant à la position i, la meilleure recommandation de l'utilisateur i.
 	 */
 	public static int[] recommend( double[][] M, int d) {
+		
+		if(!isMatrix(M) || d<=0) {
+			return null;
+		}
+		
+		System.out.println("===== Recommandation =====\n\n");
+	
+		
 		double c = 1;
 		
 		double v = 0;
@@ -358,25 +472,83 @@ public class Recommendation {
 		// V (dxm)
 		double[][] V = createMatrix(d, M[0].length, minVal, maxVal);
 		
+		System.out.println("===== U non optimisé (générée aléatoirement) =====");
+		System.out.println(matrixToString(U)+"\n\n");
+		
+		System.out.println("===== V non optimisé (générée aléatoirement) =====");
+		System.out.println(matrixToString(V)+"\n\n");
+		
+		// Optimisation des matrices U et V
 		U = optimizeU(M, U, V);
 		V = optimizeV(M, U, V);
 		
+		System.out.println("===== U optimisé =====");
+		System.out.println(matrixToString(U)+"\n\n");
+		
+		System.out.println("===== V optimisé =====");
+		System.out.println(matrixToString(V)+"\n\n");
+		
 		double[][] P = multiplyMatrix(U, V);
 		
+		
+		System.out.println("===== Matrice P = UV =====");
+		System.out.println(matrixToString(P)+"\n\n");
+
+		// Stock les valeurs trouvées dans P pour les indices des entrées à 0 dans M
+		double[][] valuesP = new double[P.length][];
+		/* Chaine de caractère qui sera coupée en tableau qui contiendra
+		 * temporairement les valeurs de P pour lesquelles
+		 * la valeur au meme indice dans M est nulle */
+		String valuesForUser = "";
+		// Variable temporaire contenant le tableau de la chaine valuesForUser éclatée
+		String[] tmpValues = null;
+		
+		// Variable qui contient la valeur maximum stockée dans valuesP pour chaque utilisateur
+		double maxValueInP = 0; 
+
+		/* Contiendra la valeur maximum de P pour chaque utilisateur,
+		 * dont les valeurs aux memes indices dans M sont nulles
+		 */
+		int[] recommended = new int[M.length];
+		
 		// On parcours M pour enregistrer l'indice des valeurs à 0
-		for(int i=0; i<P.length; ++i) {
-			for(int j=0; j<P[0].length; ++j) {
-				
+		for(int i=0; i<M.length; ++i) {
+			// On vide la chaine a chaque tour de boucle (puisqu'on pointe sur un nouvel utilisateur)
+			valuesForUser = "";
+			
+			// On parcours les entrées de M
+			for(int j=0; j<M[0].length; ++j) {
+				// Si l'entrée dans M vaut 0 on stocke la valeur correspondante de P dans une chaine de caractère
+				if(M[i][j]==0) {
+					valuesForUser += P[i][j]+";";
+				}
 			}
+			
+			maxValueInP = 0;
+			
+			if(!valuesForUser.isEmpty()) {
+				// On éclate la chaine en tableau
+				tmpValues = valuesForUser.split(";");
+				
+				// On stocke chaque valeurs enregistrée pour l'utilisateur
+				for(int j=0; j<tmpValues.length; ++j) {
+					valuesP[i][j] = Double.parseDouble(tmpValues[j]);
+				}
+				
+				// Pour l'utilisateur, on récupère la valeur maximum parmi les valeurs récupérées dans P
+				for(int j=0; j<valuesP[i].length; ++j) {
+					if(valuesP[i][j]>maxValueInP) {
+						maxValueInP = valuesP[i][j];
+					}
+				}
+			}
+			
+			// Cette valeur max est la recommandation, on la stocke dans le tableau de retour
+			recommended[i] = (int)maxValueInP;
 		}
+				
 		
-		// On parcours P et on recupère les valeurs correspondantes aux indices à 0
-		
-		// Pour chaque utilisateur, on récupère la valeur maximum parmi les valeurs récupérées dans P
-		// Cette valeur max est la recommandation, on la stocke dans le tableau de retour
-		
-		
-		return new int[]{1,54,8,4,6,5};
+		return recommended;
 	}
 }
 
