@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.DecimalFormat;
 import java.util.Random;
+import java.util.Arrays;
 
 public class Recommendation {
 
@@ -18,12 +19,8 @@ public class Recommendation {
 	public static int SCIPER2 = 235116;
 	
 	static Random random = new Random();
-	
-	public static void main(String[] args) {
-		double[][] testMatrix = createMatrix(20, 20, 5, 6);
-		double[][] testMatrix2 = createMatrix(20, 20, 5, 6);
-	
-	}
+
+	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-6;
 	
 	/** 
 	 * Convertion d'une matrice en chaine de caractère
@@ -317,17 +314,107 @@ public class Recommendation {
 
 		return numerator / denominator;
 	}
-	
+
+	public static double[][] optimizeUIter( double[][] M, double[][] U, double[][] V) {
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		int n = M.length;
+		int m = M[0].length;
+		int d = V.length;
+
+		/* Copie de U */
+		double[][] Up = new double[n][];
+		for (int i = 0; i < n; i++) {
+			Up[i] = Arrays.copyOf(U[i], d);
+		}
+
+		/* Amélioration de U */
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < d; j++) {
+				Up[i][j] = updateUElem(M, Up, V, i, j);
+			}
+		}
+
+		return Up;
+	}
+
 	public static double[][] optimizeU( double[][] M, double[][] U, double[][] V) {
-		/* TODO: Thierry */
-		/* Méthode à coder */	
-		return null;		
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		double[][] lastU = U;
+		double[][] currentU = U;
+		double lastRmse = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double[][] P = null;
+
+		do {
+			lastRmse = currentRmse;
+			lastU = currentU;
+
+			currentU = optimizeUIter(M, lastU, V);
+
+			P = multiplyMatrix(currentU, V);
+			currentRmse = rmse(M, P);
+		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+
+		return currentU;
+	}
+
+	public static double[][] optimizeVIter( double[][] M, double[][] U, double[][] V) {
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		int n = M.length;
+		int m = M[0].length;
+		int d = V.length;
+
+		/* Copie de V */
+		double[][] Vp = new double[d][];
+		for (int i = 0; i < d; i++) {
+			Vp[i] = Arrays.copyOf(V[i], m);
+		}
+
+		/* Amélioration de V */
+		for (int i = 0; i < d; i++) {
+			for (int j = 0; j < m; j++) {
+				Vp[i][j] = updateVElem(M, U, Vp, i, j);
+			}
+		}
+
+		return Vp;
 	}
 
 	public static double[][] optimizeV( double[][] M, double[][] U, double[][] V) {
-		/* TODO: Thierry */
-		/* Méthode à coder */	
-		return null;		
+		/* Matrices valides */
+		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
+			return null;
+		}
+
+		double[][] lastV = V;
+		double[][] currentV = V;
+		double lastRmse = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double[][] P = null;
+
+		do {
+			lastRmse = currentRmse;
+			lastV = currentV;
+
+			currentV = optimizeVIter(M, U, lastV);
+
+			P = multiplyMatrix(U, currentV);
+			currentRmse = rmse(M, P);
+		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+
+		return currentV;
 	}
 	
 	public static int[] recommend( double[][] M, int d) {
