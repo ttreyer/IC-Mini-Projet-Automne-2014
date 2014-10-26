@@ -24,17 +24,33 @@ public class Recommendation {
 	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-6;
 	
 	public static void main(String[] args) {
-		double[][] M = createMatrix(10, 10, -2, 1);
+		double[][] M = {{10, 0, 2, 0},
+						{
+						0, 5.5, 0, 3},
+						{ 4,
+						0, 1, 0},
+						{ 0, 0, 0, 4.5
+						}};
 		
-		System.out.println("===== Matrice générée =======");
+		System.out.println("===== Matrice M =======");
 		System.out.println(matrixToString(M));
-		
-		
-		System.out.println("===== Recommand =======");
 		int[] recommended = recommend(M, 10);
 		
+		System.out.println("Résultat recommend : ");
 		for(int i=0; i<recommended.length; ++i) {
 			System.out.println(recommended[i]);
+		}
+		
+		System.out.println("################################################\n\n");
+		
+		System.out.println("===== Matrice M (générée aléatoirement) =======");
+		double[][] matriceTest = createMatrix(10, 10, -5, 10);
+		System.out.println(matrixToString(matriceTest));
+		int[] recommended1 = recommend(matriceTest, 10);
+		
+		System.out.println("Résultat recommend : ");
+		for(int i=0; i<recommended1.length; ++i) {
+			System.out.println(recommended1[i]);
 		}
 		
 		
@@ -495,7 +511,7 @@ public class Recommendation {
 		System.out.println(matrixToString(P)+"\n\n");
 
 		// Stock les valeurs trouvées dans P pour les indices des entrées à 0 dans M
-		double[][] valuesP = new double[P.length][];
+		double[][] valuesP = new double[M.length][M[0].length];
 		/* Chaine de caractère qui sera coupée en tableau qui contiendra
 		 * temporairement les valeurs de P pour lesquelles
 		 * la valeur au meme indice dans M est nulle */
@@ -530,15 +546,22 @@ public class Recommendation {
 				// On éclate la chaine en tableau
 				tmpValues = valuesForUser.split(";");
 				
-				// On stocke chaque valeurs enregistrée pour l'utilisateur
-				for(int j=0; j<tmpValues.length; ++j) {
-					valuesP[i][j] = Double.parseDouble(tmpValues[j]);
-				}
-				
-				// Pour l'utilisateur, on récupère la valeur maximum parmi les valeurs récupérées dans P
-				for(int j=0; j<valuesP[i].length; ++j) {
-					if(valuesP[i][j]>maxValueInP) {
-						maxValueInP = valuesP[i][j];
+				if(tmpValues.length>0) {
+					if(tmpValues.length==1) {
+						maxValueInP = Double.parseDouble(tmpValues[0]);
+					} else {
+						// On stocke chaque valeurs enregistrée pour l'utilisateur
+						for(int j=0; j<tmpValues.length; ++j) {
+							
+							valuesP[i][j] = Double.parseDouble(tmpValues[j]);
+						}
+						
+						// Pour l'utilisateur, on récupère la valeur maximum parmi les valeurs récupérées dans P
+						for(int j=0; j<valuesP[i].length; ++j) {
+							if(valuesP[i][j]>maxValueInP) {
+								maxValueInP = valuesP[i][j];
+							}
+						}
 					}
 				}
 			}
