@@ -136,7 +136,7 @@ public class Recommendation {
 		double randValue;
 		
 		// Si les dimensions de la matrices ou la plage ne valeurs ne sont pas correctes
-		if(m<=0 || n<=0 || l<=k) return null;
+		if(m<=0 || n<=0 || l<k) return null;
 		
 		// Matrice
 		double[][] matrice = new double[n][m];
@@ -321,19 +321,62 @@ public class Recommendation {
 	public static double[][] optimizeU( double[][] M, double[][] U, double[][] V) {
 		/* TODO: Thierry */
 		/* Méthode à coder */	
-		return null;		
+		return U;		
 	}
 
 	public static double[][] optimizeV( double[][] M, double[][] U, double[][] V) {
 		/* TODO: Thierry */
 		/* Méthode à coder */	
-		return null;		
+		return V;		
 	}
 	
+	/**
+	 * Cette méthode retourne le tableau des recommandations
+	 * @param M Matrice nxm. Les lignes de M correspondent aux utilisateurs, les colonnes contiennent les notes des utilisateurs pour chaque films
+	 * @param d Dimension définissant les tailles de U, V (Si M est n x m => U = n x d, V = d x m)
+	 * @return Tableau d'entiers indiquant à la position i, la meilleure recommandation de l'utilisateur i.
+	 */
 	public static int[] recommend( double[][] M, int d) {
-		/* TODO: Dominique */
-		/* Méthode à coder */	
-		return null;
+		double c = 1;
+		
+		double v = 0;
+		double sum = 0;
+		for(int i=0; i<M.length; ++i) {
+			for(int j=0; j<M[0].length; ++j) {
+				if(M[i][j]!=0) {
+					sum += M[i][j];
+				}
+			}
+		}
+		v = Math.sqrt(sum/d);
+		
+		int minVal = (int)(v-c);
+		int maxVal = (int)(v+c);
+		
+		// U (nxd)
+		double[][] U = createMatrix(M.length, d, minVal, maxVal);
+		// V (dxm)
+		double[][] V = createMatrix(d, M[0].length, minVal, maxVal);
+		
+		U = optimizeU(M, U, V);
+		V = optimizeV(M, U, V);
+		
+		double[][] P = multiplyMatrix(U, V);
+		
+		// On parcours M pour enregistrer l'indice des valeurs à 0
+		for(int i=0; i<P.length; ++i) {
+			for(int j=0; j<P[0].length; ++j) {
+				
+			}
+		}
+		
+		// On parcours P et on recupère les valeurs correspondantes aux indices à 0
+		
+		// Pour chaque utilisateur, on récupère la valeur maximum parmi les valeurs récupérées dans P
+		// Cette valeur max est la recommandation, on la stocke dans le tableau de retour
+		
+		
+		return new int[]{1,54,8,4,6,5};
 	}
 }
 
