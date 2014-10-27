@@ -413,21 +413,22 @@ public class Recommendation {
 			return null;
 		}
 
-		double[][] lastU = U;
+		double[][] lastU    = U;
 		double[][] currentU = U;
-		double lastRmse = 0;
-		double currentRmse = Double.POSITIVE_INFINITY;
-		double[][] P = null;
 
-		do {
+		double lastRmse    = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double deltaRmse   = Double.POSITIVE_INFINITY;
+
+		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
-			lastU = currentU;
+			lastU    = currentU;
 
 			currentU = optimizeUIter(M, lastU, V);
 
-			P = multiplyMatrix(currentU, V);
-			currentRmse = rmse(M, P);
-		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+			currentRmse = rmse(M, multiplyMatrix(currentU, V));
+			deltaRmse   = Math.abs(lastRmse - currentRmse);
+		}
 
 		return currentU;
 	}
@@ -461,25 +462,26 @@ public class Recommendation {
 			return null;
 		}
 
-		double[][] lastV = V;
+		double[][] lastV    = V;
 		double[][] currentV = V;
-		double lastRmse = 0;
-		double currentRmse = Double.POSITIVE_INFINITY;
-		double[][] P = null;
 
-		do {
+		double lastRmse    = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double deltaRmse   = Double.POSITIVE_INFINITY;
+
+		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
-			lastV = currentV;
+			lastV    = currentV;
 
 			currentV = optimizeVIter(M, U, lastV);
 
-			P = multiplyMatrix(U, currentV);
-			currentRmse = rmse(M, P);
-		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+			currentRmse = rmse(M, multiplyMatrix(U, currentV));
+			deltaRmse   = Math.abs(lastRmse - currentRmse);
+		}
 
 		return currentV;
 	}
-	
+
 	/**
 	 * Cette méthode retourne le tableau des recommandations
 	 * @param M Matrice nxm. Les lignes de M correspondent aux utilisateurs, les colonnes contiennent les notes des utilisateurs pour chaque films
