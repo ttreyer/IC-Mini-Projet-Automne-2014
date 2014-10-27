@@ -1,9 +1,5 @@
 package assignment;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,7 +18,60 @@ public class Recommendation {
 	static Random random = new Random();
 
 	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-6;
+
+	/* Utility functions */
+	public static double[][] matrixCopy (double[][] A) {
+		if (isMatrix(A) == false) {
+			return null;
+		}
+
+		int n = A.length;
+		double[][] B = new double[n][];
+
+		for (int i = 0; i < n; i++) {
+			B[i] = Arrays.copyOf(A[i], A[i].length);
+		}
+
+		return B;
+	}
+
+	public static double matrixAverage (double[][] A) {
+		if (isMatrix(A) == false) {
+			return -1.0;
+		}
+
+		double sum = 0.0;
+		int count = 0;
+
+		for (int i = 0, m = A.length; i < m; i++) {
+			for (int j = 0, n = A[i].length; j < n; j++) {
+				if (A[i][j] != 0) {
+					sum += A[i][j];
+					count++;
+				}
+			}
+		}
+
+		return sum / count;
+	}
 	
+	public static String join (String separator, double[] items, DecimalFormat format) {
+		int l = items.length;
+
+		if (l == 0) {
+			return "";
+		}
+
+		StringBuilder joinedItems = new StringBuilder();
+
+		joinedItems.append(format.format(items[0]));
+		for (int i = 1; i < l; i++) {
+			joinedItems.append(separator).append(format.format(items[i]));
+		}
+
+		return joinedItems.toString();
+	}
+
 	public static void main(String[] args) {
 		double[][] M = {{10, 0, 2, 0},
 						{
@@ -55,8 +104,7 @@ public class Recommendation {
 		
 		
 	}
-	
-	
+
 	/** 
 	 * Convertion d'une matrice en chaine de caractère
 	 * @param A Matrice à convertir
@@ -78,24 +126,10 @@ public class Recommendation {
 		
 		// On parcours les lignes de la matrice
 		for(int i=0; i<A.length; ++i) {
-			 // Une tabulation et debut de la ligne
-			SMatrix += "\t{";
-			
-			// On parcours les colonnes de la matrice
-			for(int j=0; j<A[i].length; ++j) {
-				SMatrix += f.format(A[i][j]);
-				// Ajout d'une virgule après chaque valeur sauf la dernière
-				if(j!=A[i].length-1) SMatrix += ", ";
-			}
-			
-			// fin de la ligne de matrice
-			SMatrix += "}";
-			// Ajout d'une virgule après chaque ligne de matrice excepté la dernière
-			if(i!=A.length-1) SMatrix += ","; 
-			// Retour à la ligne après chaque ligne de matrice
-			SMatrix += "\n"; 
+			SMatrix += String.format("\t{ %s },\n", join(", ", A[i], f));
 		}
-		SMatrix += "};";
+
+		SMatrix += "}";
 		
 		return SMatrix;
 	}
@@ -399,10 +433,7 @@ public class Recommendation {
 		int d = V.length;
 
 		/* Copie de U */
-		double[][] Up = new double[n][];
-		for (int i = 0; i < n; i++) {
-			Up[i] = Arrays.copyOf(U[i], d);
-		}
+		double[][] Up = matrixCopy(U);
 
 		/* Amélioration de U */
 		for (int i = 0; i < n; i++) {
@@ -464,10 +495,7 @@ public class Recommendation {
 		int d = V.length;
 
 		/* Copie de V */
-		double[][] Vp = new double[d][];
-		for (int i = 0; i < d; i++) {
-			Vp[i] = Arrays.copyOf(V[i], m);
-		}
+		double[][] Vp = matrixCopy(V);
 
 		/* Amélioration de V */
 		for (int i = 0; i < d; i++) {
@@ -511,32 +539,6 @@ public class Recommendation {
 		return currentV;
 	}
 	
-	/**
-	 * Calcul une valeur d'initialisation
-	 * @param M Utility Matrix
-	 * @param d Dimensions définissant les tailles de U et V
-	 * @return Valeur d'initialisation pour la génération aléatoire de U et V
-	 */
-	public static double getV(double[][] M, int d) {
-		double v = 0;
-		double sum = 0;
-		int notNullEntries = 0;
-		
-		// Initialisation
-		for(int i=0; i<M.length; ++i) {
-			for(int j=0; j<M[0].length; ++j) {
-				if(M[i][j]!=0) {
-					sum += M[i][j];
-					++notNullEntries;
-				}
-			}
-		}
-		double denominator = (double)notNullEntries*d;
-		if(denominator==0) return 0;
-		
-		v = Math.sqrt(sum/denominator);
-		return v;
-	}
 	
 	/**
 	 * Cette méthode retourne le tableau des recommandations
@@ -551,8 +553,8 @@ public class Recommendation {
 		}
 		
 		// Initialisation
-		double v = getV(M, d);
-		if(v==0) return null;
+		double v = Math.sqrt(matrixAverage(M)/d);
+		if(v==-1) return null;
 		
 		
 		double minRMSE = 0; // RMSE minimale entre M et P
