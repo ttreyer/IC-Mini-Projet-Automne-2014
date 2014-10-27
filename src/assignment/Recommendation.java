@@ -1,9 +1,5 @@
 package assignment;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -55,8 +51,7 @@ public class Recommendation {
 		
 		
 	}
-	
-	
+
 	/** 
 	 * Convertion d'une matrice en chaine de caractère
 	 * @param A Matrice à convertir
