@@ -34,6 +34,26 @@ public class Recommendation {
 
 		return B;
 	}
+
+	public static double matrixAverage (double[][] A) {
+		if (isMatrix(A) == false) {
+			return -1.0;
+		}
+
+		double sum = 0.0;
+		int count = 0;
+
+		for (int i = 0, m = A.length; i < m; i++) {
+			for (int j = 0, n = A[i].length; j < n; j++) {
+				if (A[i][j] != 0) {
+					sum += A[i][j];
+					count++;
+				}
+			}
+		}
+
+		return sum / count;
+	}
 	
 	public static String join (String separator, double[] items, DecimalFormat format) {
 		int l = items.length;
@@ -477,16 +497,7 @@ public class Recommendation {
 		
 		double c = 1;
 		
-		double v = 0;
-		double sum = 0;
-		for(int i=0; i<M.length; ++i) {
-			for(int j=0; j<M[0].length; ++j) {
-				if(M[i][j]!=0) {
-					sum += M[i][j];
-				}
-			}
-		}
-		v = Math.sqrt(sum/d);
+		double v = Math.sqrt(matrixAverage(M));
 		
 		int minVal = (int)(v-c);
 		int maxVal = (int)(v+c);
