@@ -18,6 +18,22 @@ public class Recommendation {
 	static Random random = new Random();
 
 	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-6;
+
+	/* Utility functions */
+	public static double[][] matrixCopy (double[][] A) {
+		if (isMatrix(A) == false) {
+			return null;
+		}
+
+		int n = A.length;
+		double[][] B = new double[n][];
+
+		for (int i = 0; i < n; i++) {
+			B[i] = Arrays.copyOf(A[i], A[i].length);
+		}
+
+		return B;
+	}
 	
 	public static void main(String[] args) {
 		double[][] M = {{10, 0, 2, 0},
@@ -356,10 +372,7 @@ public class Recommendation {
 		int d = V.length;
 
 		/* Copie de U */
-		double[][] Up = new double[n][];
-		for (int i = 0; i < n; i++) {
-			Up[i] = Arrays.copyOf(U[i], d);
-		}
+		double[][] Up = matrixCopy(U);
 
 		/* Amélioration de U */
 		for (int i = 0; i < n; i++) {
@@ -407,10 +420,7 @@ public class Recommendation {
 		int d = V.length;
 
 		/* Copie de V */
-		double[][] Vp = new double[d][];
-		for (int i = 0; i < d; i++) {
-			Vp[i] = Arrays.copyOf(V[i], m);
-		}
+		double[][] Vp = matrixCopy(V);
 
 		/* Amélioration de V */
 		for (int i = 0; i < d; i++) {
