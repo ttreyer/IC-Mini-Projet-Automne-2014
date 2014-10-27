@@ -35,6 +35,23 @@ public class Recommendation {
 		return B;
 	}
 	
+	public static String join (String separator, double[] items, DecimalFormat format) {
+		int l = items.length;
+
+		if (l == 0) {
+			return "";
+		}
+
+		StringBuilder joinedItems = new StringBuilder();
+
+		joinedItems.append(format.format(items[0]));
+		for (int i = 1; i < l; i++) {
+			joinedItems.append(separator).append(format.format(items[i]));
+		}
+
+		return joinedItems.toString();
+	}
+
 	public static void main(String[] args) {
 		double[][] M = {{10, 0, 2, 0},
 						{
@@ -90,24 +107,10 @@ public class Recommendation {
 		
 		// On parcours les lignes de la matrice
 		for(int i=0; i<A.length; ++i) {
-			 // Une tabulation et debut de la ligne
-			SMatrix += "\t{";
-			
-			// On parcours les colonnes de la matrice
-			for(int j=0; j<A[i].length; ++j) {
-				SMatrix += f.format(A[i][j]);
-				// Ajout d'une virgule après chaque valeur sauf la dernière
-				if(j!=A[i].length-1) SMatrix += ", ";
-			}
-			
-			// fin de la ligne de matrice
-			SMatrix += "}";
-			// Ajout d'une virgule après chaque ligne de matrice excepté la dernière
-			if(i!=A.length-1) SMatrix += ","; 
-			// Retour à la ligne après chaque ligne de matrice
-			SMatrix += "\n"; 
+			SMatrix += String.format("\t{ %s },\n", join(", ", A[i], f));
 		}
-		SMatrix += "};";
+
+		SMatrix += "}";
 		
 		return SMatrix;
 	}
