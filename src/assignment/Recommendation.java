@@ -51,7 +51,9 @@ public class Recommendation {
 				}
 			}
 		}
-
+		
+		if(count==0) return -1.0;
+		
 		return sum / count;
 	}
 	
@@ -93,7 +95,7 @@ public class Recommendation {
 		System.out.println("################################################\n\n");
 		
 		System.out.println("===== Matrice M (générée aléatoirement) =======");
-		double[][] matriceTest = createMatrix(10, 10, -5, 10);
+		double[][] matriceTest = createMatrixZeroRandom(10, 10, -5, 10);
 		System.out.println(matrixToString(matriceTest));
 		int[] recommended1 = recommend(matriceTest, 10);
 		
@@ -233,6 +235,22 @@ public class Recommendation {
 			return matrice;
 		else
 			return null;
+	}
+	
+	public static double[][] createMatrixZeroRandom( int n, int m, int k, int l) {
+		double[][] A = createMatrix(n, m, k, l);
+		
+		if(!isMatrix(A)) return null;
+		
+		double rand =  0;
+		for(int ligne=0; ligne<n; ++ligne) {
+			for(int c=0; c<m; ++c) {
+				rand = random.nextDouble();
+				if(rand<0.6) A[ligne][c] = 0;
+			}
+		}
+		
+		return A;
 	}
 	
 	/**
@@ -553,9 +571,10 @@ public class Recommendation {
 		}
 		
 		// Initialisation
-		double v = Math.sqrt(matrixAverage(M)/d);
-		if(v==-1) return null;
+		double average = matrixAverage(M);
+		if(average==-1) return null;
 		
+		double v = Math.sqrt(average/d);
 		
 		double minRMSE = 0; // RMSE minimale entre M et P
 		double bestC = 0; // Valeur de C pour laquelle la RMSE est minimale
