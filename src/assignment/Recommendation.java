@@ -210,6 +210,10 @@ public class Recommendation {
 	 * @return Matrice nxm contenant des nombres réels générés aléatoirements
 	 */
 	public static double[][] createMatrix( int n, int m, int k, int l) {
+		return createMatrix(n, m, (double) k, (double) l);
+	}
+
+	public static double[][] createMatrix( int n, int m, double k, double l) {
 		double randValue;
 		
 		// Si les dimensions de la matrices ou la plage ne valeurs ne sont pas correctes
@@ -583,14 +587,14 @@ public class Recommendation {
 		double[][] P = null; // Matrice P pour chaque tour de boucle
 		double[][] bestP = null; // Matrice P avec la meilleure Optimisation (RMSE la plus faible)
 		
-		int minVal = 0; // Borne minimum pour la génération de U et V
-		int maxVal = 0; // Borne maximum pour la génération de U et V
+		double minVal = 0; // Borne minimum pour la génération de U et V
+		double maxVal = 0; // Borne maximum pour la génération de U et V
 		
 		// On recherche pour quelle valeur de C, la RMSE de P et M est la meilleure
 		for(double c=0; c<=1; c+=0.1) {
 			// Plage de valeurs générées
-			minVal = (int)(v-c);
-			maxVal = (int)(v+c);
+			minVal = v - c;
+			maxVal = v + c;
 			
 			// Génération de U et V
 			double[][] U = createMatrix(M.length, d, minVal, maxVal); // U (nxd)
