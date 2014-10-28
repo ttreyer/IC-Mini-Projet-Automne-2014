@@ -210,6 +210,10 @@ public class Recommendation {
 	 * @return Matrice nxm contenant des nombres réels générés aléatoirements
 	 */
 	public static double[][] createMatrix( int n, int m, int k, int l) {
+		return createMatrix(n, m, (double) k, (double) l);
+	}
+
+	public static double[][] createMatrix( int n, int m, double k, double l) {
 		double randValue;
 		
 		// Si les dimensions de la matrices ou la plage ne valeurs ne sont pas correctes
@@ -476,21 +480,22 @@ public class Recommendation {
 			return null;
 		}
 
-		double[][] lastU = U;
+		double[][] lastU    = U;
 		double[][] currentU = U;
-		double lastRmse = 0;
-		double currentRmse = Double.POSITIVE_INFINITY;
-		double[][] P = null;
 
-		do {
+		double lastRmse    = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double deltaRmse   = Double.POSITIVE_INFINITY;
+
+		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
-			lastU = currentU;
+			lastU    = currentU;
 
 			currentU = optimizeUIter(M, lastU, V);
 
-			P = multiplyMatrix(currentU, V);
-			currentRmse = rmse(M, P);
-		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+			currentRmse = rmse(M, multiplyMatrix(currentU, V));
+			deltaRmse   = Math.abs(lastRmse - currentRmse);
+		}
 
 		return currentU;
 	}
@@ -538,26 +543,26 @@ public class Recommendation {
 			return null;
 		}
 
-		double[][] lastV = V;
+		double[][] lastV    = V;
 		double[][] currentV = V;
-		double lastRmse = 0;
-		double currentRmse = Double.POSITIVE_INFINITY;
-		double[][] P = null;
 
-		do {
+		double lastRmse    = 0;
+		double currentRmse = Double.POSITIVE_INFINITY;
+		double deltaRmse   = Double.POSITIVE_INFINITY;
+
+		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
-			lastV = currentV;
+			lastV    = currentV;
 
 			currentV = optimizeVIter(M, U, lastV);
 
-			P = multiplyMatrix(U, currentV);
-			currentRmse = rmse(M, P);
-		} while (Math.abs(lastRmse - currentRmse) < OPTIMIZE_RMSE_DELTA_STOP);
+			currentRmse = rmse(M, multiplyMatrix(U, currentV));
+			deltaRmse   = Math.abs(lastRmse - currentRmse);
+		}
 
 		return currentV;
 	}
-	
-	
+
 	/**
 	 * Cette méthode retourne le tableau des recommandations
 	 * @param M Matrice nxm. Les lignes de M correspondent aux utilisateurs, les colonnes contiennent les notes des utilisateurs pour chaque films
@@ -582,14 +587,14 @@ public class Recommendation {
 		double[][] P = null; // Matrice P pour chaque tour de boucle
 		double[][] bestP = null; // Matrice P avec la meilleure Optimisation (RMSE la plus faible)
 		
-		int minVal = 0; // Borne minimum pour la génération de U et V
-		int maxVal = 0; // Borne maximum pour la génération de U et V
+		double minVal = 0; // Borne minimum pour la génération de U et V
+		double maxVal = 0; // Borne maximum pour la génération de U et V
 		
 		// On recherche pour quelle valeur de C, la RMSE de P et M est la meilleure
 		for(double c=0; c<=1; c+=0.1) {
 			// Plage de valeurs générées
-			minVal = (int)(v-c);
-			maxVal = (int)(v+c);
+			minVal = v - c;
+			maxVal = v + c;
 			
 			// Génération de U et V
 			double[][] U = createMatrix(M.length, d, minVal, maxVal); // U (nxd)
