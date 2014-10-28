@@ -17,7 +17,10 @@ public class Recommendation {
 	
 	static Random random = new Random();
 
-	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-6;
+	/* U prend beaucoup plus de temps à optimizer
+	 * On compense en augmentant la limite d'optimisation */
+	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 1e-5;
+	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 1e-6;
 
 	/* Utility functions */
 	public static double[][] matrixCopy (double[][] A) {
@@ -487,7 +490,7 @@ public class Recommendation {
 		double currentRmse = Double.POSITIVE_INFINITY;
 		double deltaRmse   = Double.POSITIVE_INFINITY;
 
-		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
+		while (deltaRmse > OPTIMIZE_U_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
 			lastU    = currentU;
 
@@ -550,7 +553,7 @@ public class Recommendation {
 		double currentRmse = Double.POSITIVE_INFINITY;
 		double deltaRmse   = Double.POSITIVE_INFINITY;
 
-		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
+		while (deltaRmse > OPTIMIZE_V_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
 			lastV    = currentV;
 
