@@ -95,7 +95,7 @@ public class Recommendation {
 		System.out.println("################################################\n\n");
 		
 		System.out.println("===== Matrice M (générée aléatoirement) =======");
-		double[][] matriceTest = createMatrixZeroRandom(10, 10, -5, 10);
+		double[][] matriceTest = createMatrixZeroRandom(1000, 1000, -5, 10);
 		System.out.println(matrixToString(matriceTest));
 		int[] recommended1 = recommend(matriceTest, 10);
 		
@@ -131,7 +131,7 @@ public class Recommendation {
 			SMatrix += String.format("\t{ %s },\n", join(", ", A[i], f));
 		}
 
-		SMatrix += "}";
+		SMatrix += "};";
 		
 		return SMatrix;
 	}
@@ -317,13 +317,13 @@ public class Recommendation {
 	}
 	
 	/**
-	 * 
-	 * @param M
-	 * @param U
-	 * @param V
-	 * @param r
-	 * @param s
-	 * @return
+	 * Mise à jour d'un élément de la matrice des utilisateur 
+	 * @param M UtilityMatrix
+	 * @param U Matrice des utilisateurs
+	 * @param V Matrice des features
+	 * @param r Indice
+	 * @param s Indice
+	 * @return Nouvelle valeur 
 	 */
 	public static double updateUElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
 		/* Matrices valides */
@@ -434,11 +434,11 @@ public class Recommendation {
 	}
 
 	/**
-	 * 
-	 * @param M
-	 * @param U
-	 * @param V
-	 * @return
+	 * Optimisationde la matrice U élément par élément
+	 * @param M UtilityMatrix
+	 * @param U Matrice des utilisateurs
+	 * @param V Matrice des features
+	 * @return Matrice U Optimisée
 	 */
 	public static double[][] optimizeUIter( double[][] M, double[][] U, double[][] V) {
 		/* Matrices valides */
@@ -464,10 +464,10 @@ public class Recommendation {
 	}
 
 	/**
-	 * 
+	 * Recherche de la meilleure optimisation possible
 	 * @param M Utility Matrix
-	 * @param U Matrice U
-	 * @param V Matrice V
+	 * @param U Matrice des utilisateurs
+	 * @param V Matrice des features
 	 * @return Matrice U optimisée
 	 */
 	public static double[][] optimizeU( double[][] M, double[][] U, double[][] V) {
@@ -496,11 +496,11 @@ public class Recommendation {
 	}
 
 	/**
-	 * 
-	 * @param M 
-	 * @param U 
-	 * @param V 
-	 * @return 
+	 * Optimisation de la matrice V élément par élément
+	 * @param M UtilityMatrix
+	 * @param U Matrice des utilisateurs
+	 * @param V Matrice des features
+	 * @return Matrice V Optimisée
 	 */
 	public static double[][] optimizeVIter( double[][] M, double[][] U, double[][] V) {
 		/* Matrices valides */
@@ -526,7 +526,7 @@ public class Recommendation {
 	}
 
 	/**
-	 * 
+	 * Recherche de la meilleure optimisation possible pour la matrice V
 	 * @param M Utility Matrix
 	 * @param U Matrice U
 	 * @param V Matrice V
@@ -621,7 +621,7 @@ public class Recommendation {
 			// RMSE entre M et P pour la valeur actuelle de C
 			currentRMSE = rmse(M, P);
 			
-			// Au premier tour de boucle on définit la RSE actuelle comme étant la min.
+			// Au premier tour de boucle on définit la RMSE actuelle comme étant la min.
 			if(c==0) minRMSE = currentRMSE;
 			
 			// Si la RMSE actuelle est plus petit que la min. deja enregistrée
