@@ -646,7 +646,7 @@ public class Recommendation {
 		 */
 
 		// Variable qui contient la valeur maximum stockée dans P pour chaque utilisateur
-		double maxValueInP = Double.MIN_VALUE; 
+		double maxValueInP = Double.NEGATIVE_INFINITY;
 
 		/* Contiendra les indices des valeurs maximum dans P pour chaque utilisateur,
 		 * dont les valeurs aux memes indices dans M sont nulles
@@ -658,7 +658,7 @@ public class Recommendation {
 			// Par defaut, aucune recommandation
 			recommended[i] = -1;
 			// Valeur max au minimum pour qu'une valeur de P soit toujours plus grande
-			maxValueInP = Double.MIN_VALUE;
+			maxValueInP = Double.NEGATIVE_INFINITY;
 			
 			// On parcours les entrées de M
 			for(int j=0; j<M[0].length; ++j) {
