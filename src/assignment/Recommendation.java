@@ -95,9 +95,9 @@ public class Recommendation {
 		System.out.println("################################################\n\n");
 		
 		System.out.println("===== Matrice M (générée aléatoirement) =======");
-		double[][] matriceTest = createMatrixZeroRandom(1000, 1000, -5, 10);
+		double[][] matriceTest = createMatrixZeroRandom(1000, 1000, -5000, 10000);
 		System.out.println(matrixToString(matriceTest));
-		int[] recommended1 = recommend(matriceTest, 10);
+		int[] recommended1 = recommend(matriceTest, 20);
 		
 		System.out.println("Résultat recommend : ");
 		for(int i=0; i<recommended1.length; ++i) {
