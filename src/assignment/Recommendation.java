@@ -19,50 +19,12 @@ public class Recommendation {
 
 	/* U prend beaucoup plus de temps à optimizer
 	 * On compense en augmentant la limite d'optimisation */
-	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 1e-8;
-	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 1e-8;
+	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 1e-6;
+	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 1e-6;
 
 	
 	public static void main(String[] args) {
-		
-		double[][] M = {
-				{ 10, 5, 8 ,9,  0, 0, },
-				{ 10, 0, 8, 9, 12, 2, },
-		};
-	
-		System.out.println("===== Matrice M =======");
-		System.out.println(matrixToString(M));
-		int[] recommended = recommend(M, 20);
-		
-		System.out.println("Résultat recommend : ");
-		for(int i=0; i<recommended.length; ++i) {
-			System.out.println(recommended[i]);
-		}
-		
-		int error = 0;
-		for (int i = 0; i < 1000; i++) {
-			recommended = recommend(M, 5);
-			if (recommended[0] == 5)
-				error++;
-		}
-		System.out.println("tdfgdgd");
-		System.out.format("Error: %d/1'000\n", error);
-		
-		/*
-		System.out.println("################################################\n\n");
-		
-		System.out.println("===== Matrice M (générée aléatoirement) =======");
-		double[][] matriceTest = createMatrixZeroRandom(100, 200, 0, 20);
-		System.out.println(matrixToString(matriceTest));
-		int[] recommended1 = recommend(matriceTest, 20);
-		
-		System.out.println("Résultat recommend : ");
-		for(int i=0; i<recommended1.length; ++i) {
-			System.out.println(recommended1[i]);
-		}
-		*/
-		
-		/*
+
 		double[][] M={
 			{ 3.0, 7.0, 6.0, 7.0, 6.0, 4.0},
 			{ 3.0, 13.0, 10.0, 13.0, 12.0, 6.0},
@@ -87,14 +49,16 @@ public class Recommendation {
 		
 		double[][] P = multiplyMatrix(U, V);
 		
-		System.out.println(rmse(M, P));
-		U = optimi0zeUIter(M, U, V);
-		System.out.println("Optimisation U : "+matrixToString(U));
-		P = multiplyMatrix(U, V);
-		System.out.println(rmse(M, P));
-		
-		System.out.println(matrixToString(P));
-		*/
+		int[] recommended = null;
+		int error = 0;
+		for (int j = 0; j < 200; j++) {
+			recommended = recommend(M, 5);
+			for(int i=0; i<recommended.length; ++i) {
+				System.out.print(recommended[i]+" ");
+			}
+			System.out.println();
+		}
+
 		
 	}
 	
@@ -635,9 +599,6 @@ public class Recommendation {
 				P = currentP; // Enregistrement de la meilleure matrice P
 			}
 		}
-		
-		System.out.println(matrixToString(P));
-		
 
 		/* Contiendra les indices des valeurs maximum dans P pour chaque utilisateur,
 		 * dont les valeurs aux memes indices dans M sont nulles
