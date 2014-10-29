@@ -19,12 +19,12 @@ public class Recommendation {
 
 	/* U prend beaucoup plus de temps à optimizer
 	 * On compense en augmentant la limite d'optimisation */
-	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 1e-6;
-	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 1e-6;
+	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 10e-6;
+	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 10e-6;
 
 	
 	public static void main(String[] args) {
-
+		
 		double[][] M={
 			{ 3.0, 7.0, 6.0, 7.0, 6.0, 4.0},
 			{ 3.0, 13.0, 10.0, 13.0, 12.0, 6.0},
@@ -48,6 +48,34 @@ public class Recommendation {
 		};
 		
 		double[][] P = multiplyMatrix(U, V);
+		System.out.println(matrixToString(P));
+		System.out.println(rmse(M,P));
+		
+		U = optimizeU(M, U, V);
+		V = optimizeV(M, U, V);
+		
+		P = multiplyMatrix(U, V);
+		System.out.println(rmse(M, P));
+		
+		
+		double[][] testRMSEM = {
+				 {5,2,4,4,3},
+				 {3,1,2,4,1},
+				 {2,0,3,1,4},
+				 {2,5,4,3,5},
+				 {4,4,5,4,0}
+				 };
+				 double[][] testRMSEP = {
+				 {2,2,2,2,2},
+				 {2,2,2,2,2},
+				 {2,2,2,2,2},
+				 {2,2,2,2,2},
+				 {2,2,2,2,2}
+				 };
+				 
+				 System.out.println(matrixToString(multiplyMatrix(testRMSEM, testRMSEP)));
+		
+		
 		
 		int[] recommended = null;
 		int error = 0;
@@ -58,8 +86,16 @@ public class Recommendation {
 			}
 			System.out.println();
 		}
-
+	
 		
+		/*
+		double[][] M = createMatrixZeroRandom(100,200,-10,10);
+		int[] recom = recommend(M, 20);
+		System.out.println();
+		for(int i=0; i<recom.length; ++i) {
+			System.out.println(i+" : "+recom[i]);
+		}
+		*/
 	}
 	
 	// ======================================================================================
@@ -98,6 +134,7 @@ public class Recommendation {
 			}
 		}
 		
+		// Si tous les éléments du tableau sont nuls, on retourne la valeur maximal double positif
 		if(count==0) return Double.POSITIVE_INFINITY;
 		
 		return sum / count;
@@ -212,9 +249,11 @@ public class Recommendation {
 				}
 			}
 		}
-
+		
 		return C;	
 	}
+	
+	
 	
 	/**
 	 * Créer une matrice a partir d'une taille donnée et d'une plage de valeur
@@ -230,8 +269,9 @@ public class Recommendation {
 	}
 
 	public static double[][] createMatrix( int n, int m, double k, double l) {
-		double randValue;
+		double randValue = 0;
 		
+		//System.out.println("(k, l)=("+k+","+l+")");
 		// Si les dimensions de la matrices ou la plage ne valeurs ne sont pas correctes
 		if(m<=0 || n<=0 || l<k) return null;
 		
@@ -242,11 +282,12 @@ public class Recommendation {
 		for(int ligne=0; ligne<n; ++ligne) {
 			// On parcours chaque colonne
 			for(int c=0; c<m; ++c) {
+				
 				// Génération d'une valeur réelle aléatoire comprise entre k et l
 				randValue = k+(l-k)*random.nextDouble();
-				
+				//System.out.println("rand (k="+k+", (l-k)="+(l-k)+"): "+randValue);
 				//Remplissage de la matrice
-				matrice[ligne][c] = randValue;
+				matrice[ligne][c] = (randValue==Double.NaN) ? 0 : randValue;
 			}
 		}
 		
@@ -308,6 +349,13 @@ public class Recommendation {
 		if(notNullEntries==0) return -1;
 		
 		double Smean = S/notNullEntries;
+		
+		/*
+		System.out.println("Methode RMSE : ");
+		System.out.println("S : "+S);
+		System.out.println("Entrées différentes de 0 : "+notNullEntries);
+		System.out.println("Smean : "+Smean);
+		*/
 		
 		return Math.sqrt(Smean);
 	}
@@ -562,54 +610,83 @@ public class Recommendation {
 	 * @return Tableau d'entiers indiquant à la position i, la meilleure recommandation de l'utilisateur i.
 	 */
 	public static int[] recommend( double[][] M, int d) {
-		// Vérifie que M soit une matrice et que la dimension de matrice d ne soit pas <= 0
+		// Vérifie que M soit une matrice et que la dimension d pour les matrices U et V ne soit pas <= 0
 		if(!isMatrix(M) || d<=0) {
 			return null;
 		}
 		
-		// Initialisation
-		double average = matrixAverage(M);
-		if(average==Double.POSITIVE_INFINITY) return null;
-		
-		double v = Math.sqrt(average/d);
-		
-		double minRMSE = 0; // RMSE minimale entre M et P
-		double currentRMSE = Double.POSITIVE_INFINITY; // RMSE actuelle dans chaque tours de boucles
-		double[][] P = null; // Matrice P pour chaque tour de boucle
-		
-		// On recherche pour quelle valeur de C, la RMSE de P et M est la meilleure
-		for(double c=0.5; c<=1; c+=0.1) {
-			// Génération de U et V
-			double[][] U = createMatrix(M.length, d, (v - c), (v + c)); // U (nxd)
-			double[][] V = createMatrix(d, M[0].length, (v - c), (v + c)); // V (dxm)
-			
-			// Optimisation des matrices U et V
-			U = optimizeU(M, U, V);
-			V = optimizeV(M, U, V);
-			
-			// Multiplication de U et V optimisées
-			double[][] currentP = multiplyMatrix(U, V);
-			
-			// RMSE entre M et P pour la valeur actuelle de C
-			currentRMSE = rmse(M, P);
-			
-			// Si la RMSE actuelle est plus petit que la min. deja enregistrée
-			if(currentRMSE<minRMSE) {
-				minRMSE = currentRMSE; // Enregistrement du RMSE min
-				P = currentP; // Enregistrement de la meilleure matrice P
-			}
-		}
-
 		/* Contiendra les indices des valeurs maximum dans P pour chaque utilisateur,
 		 * dont les valeurs aux memes indices dans M sont nulles
 		 */
 		int[] recommended = new int[M.length];
 		
+		// Initialisation du tableau des recommandations. Avant le calcul, par défaut, tout à -1 pour chaque utilisateurs
+		for(int i=0; i<M.length; ++i) {
+			recommended[i] = -1;
+		}
+		
+		// Initialisation. On prend la valeur absolue de ce nombre parce qu'il sera inséré dans une racine 
+		// donc si sa valeur est négative ont aura un retour Not a Number !
+		double average = Math.abs(matrixAverage(M));
+		if(average==Double.POSITIVE_INFINITY) {
+			return recommended;
+		}
+		
+		double v = Math.sqrt(average/(double)d);
+		
+		
+		double minRMSE = Double.POSITIVE_INFINITY; // RMSE minimale entre M et P
+		double currentRMSE = Double.POSITIVE_INFINITY; // RMSE actuelle dans chaque tours de boucles
+		double[][] P = null; // Matrice P pour chaque tour de boucle
+		double[][] currentP = null;
+		double bestC = 0;
+		double[][] U = null;
+		double[][] V = null;
+		
+		// On recherche pour quelle valeur de C, la RMSE de P et M est la meilleure
+		for(double c=0; c<=0.5; c+=0.1) {
+			// Génération de U et V
+			 U = createMatrix(M.length, d, (v - c), (v + c)); // U (nxd)
+			 V = createMatrix(d, M[0].length, (v - c), (v + c)); // V (dxm)
+			
+			 //System.out.println("v-c = "+(v-c));
+			// System.out.println("v+c = "+(v+c));
+			 //System.out.println(matrixToString(U));
+			 
+			// Optimisation des matrices U et V
+			U = optimizeU(M, U, V);
+			V = optimizeV(M, U, V);
+			
+			// Multiplication de U et V optimisées
+			currentP = multiplyMatrix(U, V);
+			
+			// RMSE entre M et P pour la valeur actuelle de C
+			currentRMSE = rmse(M, currentP);
+			//System.out.println("rmse (c="+c+"): "+rmse(M, currentP));
+			// Si la RMSE actuelle est plus petit que la min. deja enregistrée
+			if(currentRMSE<minRMSE) {
+				bestC = c;
+				minRMSE = currentRMSE; // Enregistrement du RMSE min
+				P = currentP; // Enregistrement de la meilleure matrice P
+			}
+		}
+		
+		// Important ! Ne pas supprimer la ligne 
+		//P = currentP;
+		
+		/*
+		System.out.println(" === M ===\n"+matrixToString(M));
+		System.out.println(" === P ===\n"+matrixToString(P));
+		System.out.println(" === U ===\n"+matrixToString(U));
+		System.out.println(" === V ===\n"+matrixToString(V));
+		*/
+		System.out.print(" c : "+bestC+" ## ");
+
+		
+		
 		
 		// On parcours les lignes de M (les utilisateurs)
 		for(int i=0; i<M.length; ++i) {
-			// Par defaut, aucune recommandation
-			recommended[i] = -1;
 			// Valeur max au minimum pour qu'une valeur de P soit toujours plus grande
 			double maxValueInP = Double.NEGATIVE_INFINITY;
 			
