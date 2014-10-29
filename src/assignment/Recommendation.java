@@ -19,8 +19,8 @@ public class Recommendation {
 
 	/* U prend beaucoup plus de temps à optimizer
 	 * On compense en augmentant la limite d'optimisation */
-	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 10e-6;
-	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 10e-6;
+	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 1e-6;
+	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 1e-6;
 
 	
 	public static void main(String[] args) {
@@ -271,7 +271,6 @@ public class Recommendation {
 	public static double[][] createMatrix( int n, int m, double k, double l) {
 		double randValue = 0;
 		
-		//System.out.println("(k, l)=("+k+","+l+")");
 		// Si les dimensions de la matrices ou la plage ne valeurs ne sont pas correctes
 		if(m<=0 || n<=0 || l<k) return null;
 		
@@ -285,9 +284,9 @@ public class Recommendation {
 				
 				// Génération d'une valeur réelle aléatoire comprise entre k et l
 				randValue = k+(l-k)*random.nextDouble();
-				//System.out.println("rand (k="+k+", (l-k)="+(l-k)+"): "+randValue);
+	
 				//Remplissage de la matrice
-				matrice[ligne][c] = (randValue==Double.NaN) ? 0 : randValue;
+				matrice[ligne][c] = randValue;
 			}
 		}
 		
@@ -350,14 +349,7 @@ public class Recommendation {
 		
 		double Smean = S/notNullEntries;
 		
-		/*
-		System.out.println("Methode RMSE : ");
-		System.out.println("S : "+S);
-		System.out.println("Entrées différentes de 0 : "+notNullEntries);
-		System.out.println("Smean : "+Smean);
-		*/
-		
-		return Math.sqrt(Smean);
+		return Math.sqrt(Math.abs(Smean));
 	}
 	
 	/**
@@ -648,10 +640,6 @@ public class Recommendation {
 			// Génération de U et V
 			 U = createMatrix(M.length, d, (v - c), (v + c)); // U (nxd)
 			 V = createMatrix(d, M[0].length, (v - c), (v + c)); // V (dxm)
-			
-			 //System.out.println("v-c = "+(v-c));
-			// System.out.println("v+c = "+(v+c));
-			 //System.out.println(matrixToString(U));
 			 
 			// Optimisation des matrices U et V
 			U = optimizeU(M, U, V);
@@ -662,7 +650,7 @@ public class Recommendation {
 			
 			// RMSE entre M et P pour la valeur actuelle de C
 			currentRMSE = rmse(M, currentP);
-			//System.out.println("rmse (c="+c+"): "+rmse(M, currentP));
+			
 			// Si la RMSE actuelle est plus petit que la min. deja enregistrée
 			if(currentRMSE<minRMSE) {
 				bestC = c;
@@ -670,19 +658,6 @@ public class Recommendation {
 				P = currentP; // Enregistrement de la meilleure matrice P
 			}
 		}
-		
-		// Important ! Ne pas supprimer la ligne 
-		//P = currentP;
-		
-		/*
-		System.out.println(" === M ===\n"+matrixToString(M));
-		System.out.println(" === P ===\n"+matrixToString(P));
-		System.out.println(" === U ===\n"+matrixToString(U));
-		System.out.println(" === V ===\n"+matrixToString(V));
-		*/
-		System.out.print(" c : "+bestC+" ## ");
-
-		
 		
 		
 		// On parcours les lignes de M (les utilisateurs)
