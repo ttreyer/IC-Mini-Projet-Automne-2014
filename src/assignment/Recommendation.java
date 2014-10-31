@@ -19,7 +19,7 @@ public class Recommendation {
 
 	public static double OPTIMIZE_RMSE_DELTA_MAX = 5e-5;
 	public static double OPTIMIZE_RMSE_DELTA_MIN = 1e-10;
-	public static double OPTIMIZE_RMSE_DELTA_STOP = 1;
+	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-5;
 
 	// ======================================================================================
 	/* Utility functions */
