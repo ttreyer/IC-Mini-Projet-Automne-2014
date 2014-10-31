@@ -17,7 +17,9 @@ public class Recommendation {
 
 	static Random random = new Random();
 
-	public static double OPTIMIZE_RMSE_DELTA_STOP = 10e-6;
+	public static double OPTIMIZE_RMSE_DELTA_MAX = 5e-5;
+	public static double OPTIMIZE_RMSE_DELTA_MIN = 1e-10;
+	public static double OPTIMIZE_RMSE_DELTA_STOP = 1;
 
 	// ======================================================================================
 	/* Utility functions */
@@ -520,9 +522,17 @@ public class Recommendation {
 			return null;
 		}
 
+		int n = M.length;
+		int m = M[0].length;
+
+		int s = n * d + d * m;
+		double x = s / 6000.0;
+
+		OPTIMIZE_RMSE_DELTA_STOP = x * x * OPTIMIZE_RMSE_DELTA_MAX + OPTIMIZE_RMSE_DELTA_MIN;
+
 		// Meilleur recommendation pour chaques utilisateurs, initialisé à -1
-		int[] recommended = new int[M.length];
-		for (int i = 0; i < M.length; i++) {
+		int[] recommended = new int[n];
+		for (int i = 0; i < n; i++) {
 			recommended[i] = -1;
 		}
 
@@ -546,8 +556,8 @@ public class Recommendation {
 			double[][] currentP = null;
 
 			// Génération de U et V
-			double[][] U = createMatrix(M.length, d, (v - c), (v + c));
-			double[][] V = createMatrix(d, M[0].length, (v - c), (v + c));
+			double[][] U = createMatrix(n, d, (v - c * v), (v + c * v));
+			double[][] V = createMatrix(d, m, (v - c * v), (v + c * v));
 
 			while (deltaRMSE > OPTIMIZE_RMSE_DELTA_STOP) {
 				lastRMSE = currentRMSE;
@@ -571,11 +581,11 @@ public class Recommendation {
 		}
 
 		// Pour tous les utilisateurs...
-		for (int i = 0; i < M.length; i++) {
+		for (int i = 0; i < n; i++) {
 			double maxValueInP = Double.NEGATIVE_INFINITY;
 
 			// On recherche la meilleur recommendation
-			for (int j = 0; j < M[0].length; j++) {
+			for (int j = 0; j < m; j++) {
 				if (M[i][j] != 0) continue;
 
 				if (P[i][j] > maxValueInP) {
