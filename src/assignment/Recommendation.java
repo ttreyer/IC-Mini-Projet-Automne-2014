@@ -10,11 +10,11 @@ public class Recommendation {
 	/* Etudiant 1 */
 	public static String NAME1 = "Dominique Roduit";
 	public static int SCIPER1 = 234868;
-	
+
 	/* Etudiant 2 */
 	public static String NAME2 = "Thierry Treyer";
 	public static int SCIPER2 = 235116;
-	
+
 	static Random random = new Random();
 
 	/* U prend beaucoup plus de temps à optimizer
@@ -22,9 +22,9 @@ public class Recommendation {
 	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 10e-6;
 	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 10e-6;
 
-	
+
 	public static void main(String[] args) {
-		
+
 		double[][] M={
 			{ 3.0, 7.0, 6.0, 7.0, 6.0, 4.0},
 			{ 3.0, 13.0, 10.0, 13.0, 12.0, 6.0},
@@ -46,37 +46,37 @@ public class Recommendation {
 			{ 3.0, 3.0, 2.0, 2.0, 2.0, 3.0},
 			{ 1.0, 1.0, 0.0, 1.0, 1.0, 0.0}
 		};
-		
+
 		double[][] P = multiplyMatrix(U, V);
 		System.out.println(matrixToString(P));
 		System.out.println(rmse(M,P));
-		
+
 		U = optimizeU(M, U, V);
 		V = optimizeV(M, U, V);
-		
+
 		P = multiplyMatrix(U, V);
 		System.out.println(rmse(M, P));
-		
-		
+
+
 		double[][] testRMSEM = {
-				 {5,2,4,4,3},
-				 {3,1,2,4,1},
-				 {2,0,3,1,4},
-				 {2,5,4,3,5},
-				 {4,4,5,4,0}
-				 };
-				 double[][] testRMSEP = {
-				 {2,2,2,2,2},
-				 {2,2,2,2,2},
-				 {2,2,2,2,2},
-				 {2,2,2,2,2},
-				 {2,2,2,2,2}
-				 };
-				 
-				 System.out.println(matrixToString(multiplyMatrix(testRMSEM, testRMSEP)));
-		
-		
-		
+			{5,2,4,4,3},
+			{3,1,2,4,1},
+			{2,0,3,1,4},
+			{2,5,4,3,5},
+			{4,4,5,4,0}
+		};
+		double[][] testRMSEP = {
+			{2,2,2,2,2},
+			{2,2,2,2,2},
+			{2,2,2,2,2},
+			{2,2,2,2,2},
+			{2,2,2,2,2}
+		};
+
+		System.out.println(matrixToString(multiplyMatrix(testRMSEM, testRMSEP)));
+
+
+
 		int[] recommended = null;
 		int error = 0;
 		for (int j = 0; j < 200; j++) {
@@ -86,22 +86,22 @@ public class Recommendation {
 			}
 			System.out.println();
 		}
-	
-		
+
+
 		/*
-		double[][] M = createMatrixZeroRandom(100,200,-10,10);
-		int[] recom = recommend(M, 20);
-		System.out.println();
-		for(int i=0; i<recom.length; ++i) {
-			System.out.println(i+" : "+recom[i]);
-		}
-		*/
+		   double[][] M = createMatrixZeroRandom(100,200,-10,10);
+		   int[] recom = recommend(M, 20);
+		   System.out.println();
+		   for(int i=0; i<recom.length; ++i) {
+		   System.out.println(i+" : "+recom[i]);
+		   }
+		   */
 	}
-	
+
 	// ======================================================================================
 	/* Utility functions */
 	// ======================================================================================
-	
+
 	public static double[][] matrixCopy (double[][] A) {
 		if (isMatrix(A) == false) {
 			return null;
@@ -133,13 +133,13 @@ public class Recommendation {
 				}
 			}
 		}
-		
+
 		// Si tous les éléments du tableau sont nuls, on retourne la valeur maximal double positif
 		if(count==0) return Double.POSITIVE_INFINITY;
-		
+
 		return sum / count;
 	}
-	
+
 	public static String join (String separator, double[] items, DecimalFormat format) {
 		int l = items.length;
 
@@ -156,10 +156,10 @@ public class Recommendation {
 
 		return joinedItems.toString();
 	}
-	
+
 
 	// ======================================================================================
-	
+
 	/** 
 	 * Convertion d'une matrice en chaine de caractère
 	 * @param A Matrice à convertir
@@ -167,28 +167,28 @@ public class Recommendation {
 	 */
 	public static String matrixToString(double[][] A) {
 		if(!isMatrix(A)) return null;
-		
+
 		// Formattage des valeurs de la matrice à 1 décimals au min et au max
 		DecimalFormat f = new DecimalFormat();
 		f.setMinimumFractionDigits(1);
 		f.setMaximumFractionDigits(1);
-		
+
 		// On ne veux pas d'apostrophe de séparation pour les grands chiffres (ex: 1'000)
 		f.setGroupingUsed(false);
-		
+
 		// Chaine contenant la matrice
 		String SMatrix = "{\n";
-		
+
 		// On parcours les lignes de la matrice
 		for(int i=0; i<A.length; ++i) {
 			SMatrix += String.format("\t{ %s },\n", join(", ", A[i], f));
 		}
 
 		SMatrix += "};";
-		
+
 		return SMatrix;
 	}
-	
+
 	/**
 	 * Contrôle que le tableau 2D passé en paramètre soit la représentation d'une matrice valide
 	 * @param A Tableau 2D a vérifier
@@ -219,7 +219,7 @@ public class Recommendation {
 
 		return true;
 	}
-	
+
 	/**
 	 * 
 	 * @param A
@@ -249,12 +249,12 @@ public class Recommendation {
 				}
 			}
 		}
-		
+
 		return C;	
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Créer une matrice a partir d'une taille donnée et d'une plage de valeur
 	 * aléatoire
@@ -270,19 +270,19 @@ public class Recommendation {
 
 	public static double[][] createMatrix( int n, int m, double k, double l) {
 		double randValue = 0;
-		
+
 		//System.out.println("(k, l)=("+k+","+l+")");
 		// Si les dimensions de la matrices ou la plage ne valeurs ne sont pas correctes
 		if(m<=0 || n<=0 || l<k) return null;
-		
+
 		// Matrice
 		double[][] matrice = new double[n][m];
-		
+
 		// On parcours chaque ligne de la matrice
 		for(int ligne=0; ligne<n; ++ligne) {
 			// On parcours chaque colonne
 			for(int c=0; c<m; ++c) {
-				
+
 				// Génération d'une valeur réelle aléatoire comprise entre k et l
 				randValue = k+(l-k)*random.nextDouble();
 				//System.out.println("rand (k="+k+", (l-k)="+(l-k)+"): "+randValue);
@@ -290,19 +290,19 @@ public class Recommendation {
 				matrice[ligne][c] = (randValue==Double.NaN) ? 0 : randValue;
 			}
 		}
-		
+
 		// On ne retourne la matrice que si celle-ci est correcte
 		if(isMatrix(matrice)) 
 			return matrice;
 		else
 			return null;
 	}
-	
+
 	public static double[][] createMatrixZeroRandom( int n, int m, int k, int l) {
 		double[][] A = createMatrix(n, m, k, l);
-		
+
 		if(!isMatrix(A)) return null;
-		
+
 		double rand =  0;
 		for(int ligne=0; ligne<n; ++ligne) {
 			for(int c=0; c<m; ++c) {
@@ -310,10 +310,10 @@ public class Recommendation {
 				if(rand<0.6) A[ligne][c] = 0;
 			}
 		}
-		
+
 		return A;
 	}
-	
+
 	/**
 	 * Calcul du RMSE entre les matrices M et P pour tous les éléments non nuls de M
 	 * @param M Matrice M
@@ -325,16 +325,16 @@ public class Recommendation {
 		if(!isMatrix(M) || !isMatrix(P)) {
 			return -1;
 		}
-		
+
 		// Si les matrices ne sont pas de même dimensions
 		if(M.length!=P.length || M[0].length!= P[0].length) {
 			return -1;
 		}
-		
-		
+
+
 		int notNullEntries = 0;
 		double S = 0;
-		
+
 		// Parcours des lignes
 		for(int i=0; i<M.length; ++i) {
 			for(int j=0; j<M[0].length; ++j) {
@@ -347,19 +347,19 @@ public class Recommendation {
 
 		// Si le denominateur de Smean est 0 on ne fais pas la division !
 		if(notNullEntries==0) return -1;
-		
+
 		double Smean = S/notNullEntries;
-		
+
 		/*
-		System.out.println("Methode RMSE : ");
-		System.out.println("S : "+S);
-		System.out.println("Entrées différentes de 0 : "+notNullEntries);
-		System.out.println("Smean : "+Smean);
-		*/
-		
+		   System.out.println("Methode RMSE : ");
+		   System.out.println("S : "+S);
+		   System.out.println("Entrées différentes de 0 : "+notNullEntries);
+		   System.out.println("Smean : "+Smean);
+		   */
+
 		return Math.sqrt(Smean);
 	}
-	
+
 	/**
 	 * Mise à jour d'un élément de la matrice des utilisateur 
 	 * @param M UtilityMatrix
@@ -412,13 +412,13 @@ public class Recommendation {
 			numerator   += vsj * (mrj - suv);
 			denominator += vsj * vsj;
 		}
-		
+
 		if(denominator==0) return -1;
-		
-		
+
+
 		return numerator / denominator;
 	}
-	
+
 	/**
 	 * Met à jour une valeur de V donnée par son indice r et s pour réduire le RMSE entre M et P=UV
 	 * @param M 
@@ -471,7 +471,7 @@ public class Recommendation {
 			numerator   += uir * (mis - suv);
 			denominator += uir * uir;
 		}
-		
+
 		if(denominator==0) return -1;
 
 		return numerator / denominator;
@@ -614,27 +614,27 @@ public class Recommendation {
 		if(!isMatrix(M) || d<=0) {
 			return null;
 		}
-		
+
 		/* Contiendra les indices des valeurs maximum dans P pour chaque utilisateur,
 		 * dont les valeurs aux memes indices dans M sont nulles
 		 */
 		int[] recommended = new int[M.length];
-		
+
 		// Initialisation du tableau des recommandations. Avant le calcul, par défaut, tout à -1 pour chaque utilisateurs
 		for(int i=0; i<M.length; ++i) {
 			recommended[i] = -1;
 		}
-		
+
 		// Initialisation. On prend la valeur absolue de ce nombre parce qu'il sera inséré dans une racine 
 		// donc si sa valeur est négative ont aura un retour Not a Number !
 		double average = Math.abs(matrixAverage(M));
 		if(average==Double.POSITIVE_INFINITY) {
 			return recommended;
 		}
-		
+
 		double v = Math.sqrt(average/(double)d);
-		
-		
+
+
 		double minRMSE = Double.POSITIVE_INFINITY; // RMSE minimale entre M et P
 		double currentRMSE = Double.POSITIVE_INFINITY; // RMSE actuelle dans chaque tours de boucles
 		double[][] P = null; // Matrice P pour chaque tour de boucle
@@ -642,24 +642,25 @@ public class Recommendation {
 		double bestC = 0;
 		double[][] U = null;
 		double[][] V = null;
-		
+
 		// On recherche pour quelle valeur de C, la RMSE de P et M est la meilleure
 		for(double c=0; c<=0.5; c+=0.1) {
 			// Génération de U et V
-			 U = createMatrix(M.length, d, (v - c), (v + c)); // U (nxd)
-			 V = createMatrix(d, M[0].length, (v - c), (v + c)); // V (dxm)
-			
-			 //System.out.println("v-c = "+(v-c));
+			U = createMatrix(M.length, d, (v - c), (v + c)); // U (nxd)
+			V = createMatrix(d, M[0].length, (v - c), (v + c)); // V (dxm)
+
+			//System.out.println("v-c = "+(v-c));
 			// System.out.println("v+c = "+(v+c));
-			 //System.out.println(matrixToString(U));
-			 
+			//System.out.println(matrixToString(U));
+
+
 			// Optimisation des matrices U et V
 			U = optimizeU(M, U, V);
 			V = optimizeV(M, U, V);
-			
+
 			// Multiplication de U et V optimisées
 			currentP = multiplyMatrix(U, V);
-			
+
 			// RMSE entre M et P pour la valeur actuelle de C
 			currentRMSE = rmse(M, currentP);
 			//System.out.println("rmse (c="+c+"): "+rmse(M, currentP));
@@ -670,26 +671,26 @@ public class Recommendation {
 				P = currentP; // Enregistrement de la meilleure matrice P
 			}
 		}
-		
+
 		// Important ! Ne pas supprimer la ligne 
 		//P = currentP;
-		
+
 		/*
-		System.out.println(" === M ===\n"+matrixToString(M));
-		System.out.println(" === P ===\n"+matrixToString(P));
-		System.out.println(" === U ===\n"+matrixToString(U));
-		System.out.println(" === V ===\n"+matrixToString(V));
-		*/
+		   System.out.println(" === M ===\n"+matrixToString(M));
+		   System.out.println(" === P ===\n"+matrixToString(P));
+		   System.out.println(" === U ===\n"+matrixToString(U));
+		   System.out.println(" === V ===\n"+matrixToString(V));
+		   */
 		System.out.print(" c : "+bestC+" ## ");
 
-		
-		
-		
+
+
+
 		// On parcours les lignes de M (les utilisateurs)
 		for(int i=0; i<M.length; ++i) {
 			// Valeur max au minimum pour qu'une valeur de P soit toujours plus grande
 			double maxValueInP = Double.NEGATIVE_INFINITY;
-			
+
 			// On parcours les entrées de M
 			for(int j=0; j<M[0].length; ++j) {
 				// Pour toutes les entrées nulles de M
@@ -704,7 +705,7 @@ public class Recommendation {
 				}
 			}
 		}
-				
+
 		return recommended;
 	}
 }
