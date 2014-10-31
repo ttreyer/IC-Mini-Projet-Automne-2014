@@ -1,6 +1,14 @@
 package assignment;
 
 public class MainRecommendation extends Recommendation {
+	public static void printRecommend (int[] recommend) {
+		for (int i = 0; i < recommend.length; i++) {
+			System.out.format("%d ", recommend[i]);
+		}
+
+		System.out.println();
+	}
+
 	public static void main (String[] args) {
 		double[][] M={
 			{ 3.0, 7.0, 6.0, 7.0, 6.0, 4.0},
@@ -24,24 +32,12 @@ public class MainRecommendation extends Recommendation {
 			{ 1.0, 1.0, 0.0, 1.0, 1.0, 0.0}
 		};
 
-		double[][] P = multiplyMatrix(U, V);
-		System.out.println(matrixToString(P));
-		System.out.println(rmse(M,P));
+		M = createMatrix(100, 200, 1, 9, 0.8);
 
-		U = optimizeU(M, U, V);
-		V = optimizeV(M, U, V);
-
-		P = multiplyMatrix(U, V);
-		System.out.println(rmse(M, P));
-
-		int[] recommended = null;
-		int error = 0;
-		for (int j = 0; j < 200; j++) {
-			recommended = recommend(M, 5);
-			for(int i=0; i<recommended.length; ++i) {
-				System.out.print(recommended[i]+" ");
-			}
-			System.out.println();
+		for (int n = 0; n < 1; n++) {
+			int[] recommended = recommend(M, 20);
+			System.out.print("# ");
+			printRecommend(recommended);
 		}
 	}
 }
