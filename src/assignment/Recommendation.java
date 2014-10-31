@@ -19,9 +19,7 @@ public class Recommendation {
 
 	/* U prend beaucoup plus de temps à optimizer
 	 * On compense en augmentant la limite d'optimisation */
-	public static double OPTIMIZE_U_RMSE_DELTA_STOP = 10e-6;
-	public static double OPTIMIZE_V_RMSE_DELTA_STOP = 10e-6;
-
+	public static double OPTIMIZE_RMSE_DELTA_STOP = 10e-6;
 
 	public static void main(String[] args) {
 
@@ -79,13 +77,13 @@ public class Recommendation {
 
 		int[] recommended = null;
 		int error = 0;
-		for (int j = 0; j < 200; j++) {
+		// for (int j = 0; j < 200; j++) {
 			recommended = recommend(M, 5);
 			for(int i=0; i<recommended.length; ++i) {
 				System.out.print(recommended[i]+" ");
 			}
 			System.out.println();
-		}
+		// }
 
 
 		/*
@@ -527,7 +525,7 @@ public class Recommendation {
 		double currentRmse = Double.POSITIVE_INFINITY;
 		double deltaRmse   = Double.POSITIVE_INFINITY;
 
-		while (deltaRmse > OPTIMIZE_U_RMSE_DELTA_STOP) {
+		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
 			lastU    = currentU;
 
@@ -590,7 +588,7 @@ public class Recommendation {
 		double currentRmse = Double.POSITIVE_INFINITY;
 		double deltaRmse   = Double.POSITIVE_INFINITY;
 
-		while (deltaRmse > OPTIMIZE_V_RMSE_DELTA_STOP) {
+		while (deltaRmse > OPTIMIZE_RMSE_DELTA_STOP) {
 			lastRmse = currentRmse;
 			lastV    = currentV;
 
@@ -645,6 +643,8 @@ public class Recommendation {
 
 		// On recherche pour quelle valeur de C, la RMSE de P et M est la meilleure
 		for(double c=0; c<=0.5; c+=0.1) {
+			double lastRMSE = Double.POSITIVE_INFINITY;
+			double deltaRMSE = Double.POSITIVE_INFINITY;
 			// Génération de U et V
 			U = createMatrix(M.length, d, (v - c), (v + c)); // U (nxd)
 			V = createMatrix(d, M[0].length, (v - c), (v + c)); // V (dxm)
@@ -654,15 +654,21 @@ public class Recommendation {
 			//System.out.println(matrixToString(U));
 
 
-			// Optimisation des matrices U et V
-			U = optimizeU(M, U, V);
-			V = optimizeV(M, U, V);
+			while (deltaRMSE > OPTIMIZE_RMSE_DELTA_STOP) {
+				lastRMSE = currentRMSE;
 
-			// Multiplication de U et V optimisées
-			currentP = multiplyMatrix(U, V);
+				// Optimisation des matrices U et V
+				U = optimizeU(M, U, V);
+				V = optimizeV(M, U, V);
 
-			// RMSE entre M et P pour la valeur actuelle de C
-			currentRMSE = rmse(M, currentP);
+				// Multiplication de U et V optimisées
+				currentP = multiplyMatrix(U, V);
+
+				// RMSE entre M et P pour la valeur actuelle de C
+				currentRMSE = rmse(M, currentP);
+				deltaRMSE = Math.abs(lastRMSE - currentRMSE);
+			}
+
 			//System.out.println("rmse (c="+c+"): "+rmse(M, currentP));
 			// Si la RMSE actuelle est plus petit que la min. deja enregistrée
 			if(currentRMSE<minRMSE) {
@@ -682,6 +688,7 @@ public class Recommendation {
 		   System.out.println(" === V ===\n"+matrixToString(V));
 		   */
 		System.out.print(" c : "+bestC+" ## ");
+		System.out.print(" rmse : "+minRMSE+" ## ");
 
 
 
@@ -709,5 +716,4 @@ public class Recommendation {
 		return recommended;
 	}
 }
-
 
