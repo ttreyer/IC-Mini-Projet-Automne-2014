@@ -32,12 +32,17 @@ public class MainRecommendation extends Recommendation {
 			{ 1.0, 1.0, 0.0, 1.0, 1.0, 0.0}
 		};
 
-		M = createMatrix(100, 200, 1, 9, 0.8);
-
-		for (int n = 0; n < 1; n++) {
-			int[] recommended = recommend(M, 20);
-			System.out.print("# ");
-			printRecommend(recommended);
+		//M = createMatrix(100, 200, 1, 9, 0.8);
+		int countFalse = 0;
+		for(int i=0; i<500; i++) {
+			for (int n = 0; n < 1; n++) {
+				int[] recommended = recommend(M, 5);
+				System.out.print("# ");
+				if(recommended[2]!=1 || recommended[3]!=3 || recommended[4]!=3) countFalse++;
+				printRecommend(recommended);
+			}
 		}
+		
+		System.out.println("Faux : "+countFalse);
 	}
 }
