@@ -17,8 +17,8 @@ public class Recommendation {
 
 	static Random random = new Random();
 
-	public static double OPTIMIZE_RMSE_DELTA_MAX = 5e-5;
-	public static double OPTIMIZE_RMSE_DELTA_MIN = 1e-10;
+	public static double OPTIMIZE_RMSE_DELTA_MAX = 6e-5;
+	public static double OPTIMIZE_RMSE_DELTA_MIN = 1e-8;
 	public static double OPTIMIZE_RMSE_DELTA_STOP = 1e-5;
 
 	// ======================================================================================
@@ -528,7 +528,7 @@ public class Recommendation {
 		int s = n * d + d * m;
 		double x = s / 6000.0;
 
-		OPTIMIZE_RMSE_DELTA_STOP = x * x * OPTIMIZE_RMSE_DELTA_MAX + OPTIMIZE_RMSE_DELTA_MIN;
+		OPTIMIZE_RMSE_DELTA_STOP = x * OPTIMIZE_RMSE_DELTA_MAX + OPTIMIZE_RMSE_DELTA_MIN;
 
 		// Meilleur recommendation pour chaques utilisateurs, initialisé à -1
 		int[] recommended = new int[n];
