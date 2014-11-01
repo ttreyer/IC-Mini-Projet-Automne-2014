@@ -68,5 +68,7 @@ public class MainRecommendation extends Recommendation {
 			System.out.print("# ");
 			printRecommend(recommended);
 		}
+		
+		System.out.println("Faux : "+countFalse);
 	}
 }
