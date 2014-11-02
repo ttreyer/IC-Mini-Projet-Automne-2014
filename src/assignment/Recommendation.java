@@ -144,12 +144,6 @@ public class Recommendation {
 		return true;
 	}
 
-	/**
-	 * 
-	 * @param A
-	 * @param B
-	 * @return
-	 */
 	public static double[][] multiplyMatrix(double[][] A, double[][] B) {
 		/* Matrices A et B valides */
 		if (isMatrix(A) == false || isMatrix(B) == false) {
@@ -268,8 +262,8 @@ public class Recommendation {
 	 * @param M UtilityMatrix
 	 * @param U Matrice des utilisateurs
 	 * @param V Matrice des features
-	 * @param r Indice
-	 * @param s Indice
+	 * @param r Indice ligne
+	 * @param s Indice colonne
 	 * @return Nouvelle valeur 
 	 */
 	public static double updateUElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
@@ -323,15 +317,6 @@ public class Recommendation {
 		}
 	}
 
-	/**
-	 * Met à jour une valeur de V donnée par son indice r et s pour réduire le RMSE entre M et P=UV
-	 * @param M 
-	 * @param U
-	 * @param V
-	 * @param r indice de ligne
-	 * @param s indice de colonne
-	 * @return Nouvelle valeur de l'élément de V
-	 */
 	public static double updateVElem( double[][] M, double[][] U, double[][] V, int r, int s ) {
 		/* Matrices valides */
 		if (isMatrix(M) == false || isMatrix(U) == false || isMatrix(V) == false) {
