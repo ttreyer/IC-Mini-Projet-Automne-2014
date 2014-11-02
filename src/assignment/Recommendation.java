@@ -567,22 +567,22 @@ public class Recommendation {
 		// Pour tous les utilisateurs...
 		for (int i = 0; i < n; i++) {
 			double maxValueInP = Double.NEGATIVE_INFINITY;
-			double sumForUser = 0.0;
+			boolean userHasRating = false;
 			
 			// On recherche la meilleur recommendation
 			for (int j = 0; j < m; j++) {
-				sumForUser += M[i][j];
-				
-				if (M[i][j] != 0) continue;
-
-				if (P[i][j] > maxValueInP) {
-					maxValueInP = P[i][j];
-					recommended[i] = j;
+				if (M[i][j] != 0) {
+					userHasRating = true;
+				} else {
+					if (P[i][j] > maxValueInP) {
+						maxValueInP = P[i][j];
+						recommended[i] = j;
+					}
 				}
 				
 			}
 			
-			if(sumForUser==0) {
+			if (userHasRating == false) {
 				recommended[i] = -1;
 			}
 		}
